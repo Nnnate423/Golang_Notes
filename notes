@@ -1,0 +1,77 @@
+1. go tools
+    go build xxx.go
+    go run xxx.so xxx.txt
+    go doc
+    go fmt
+    go get
+    go test
+
+2. currency
+    goroutine
+    channel
+    select
+
+3. recommended workspace
+    defined by GOPATH var
+    src
+    pkg
+    bin
+
+4. variable
+    dec: var x,y int
+    types: int, float, string
+    type dec: type temperature float64
+                type ID int
+    init: var x int = 100 OR var x = 100 OR x:=100 (only inside function)
+        uninit var has 0 or empty value.
+    pointer: var x *int =&x OR new() returns a pointer -> x := new(int); *x=3
+    blocks: {} -> sequence of declaration and statements
+
+    int: int8,int16,...int64, uint8,..., uint 64
+    float: float32, float64 -> 
+    string: rune (code point is a Unicode character) -> x:="Hi There", each byte is a rune (UTF-8 code point)
+        unicode package: IsSpace(r rune), IsLetter(r rune), ToUpper(r rune)
+        string package: Compare(a,b), Contains(s,sub), HasPrefix(s,sub), Index(s,sub), Replace(s,old,new,n), TrimSpace(s)
+        Strconv package: Atoi(s), FormatFloat() -> float to str, ParseFloat() -> str to float
+    
+    constants: 
+        1. const ( x=4
+            z="Hi")
+        2. iota 
+            type Grade int
+            const(
+                A Grade = iota //1
+                B               //2
+                C               //3
+            )
+
+    type conversion: 
+
+5. Memory
+    heap and stack (mainly inside function)
+    compiler determines stack vs heap
+    garbage collection at background
+
+6. fmt
+    6.1 Printf: fmt.Printf("a"+ x)
+                fmt.Printf("a %s", x)
+    6.2 Scan: 
+        var x int;
+        num,err:= fmt.Scan(&x)
+
+7. flow control
+    if cond { statement }
+    for init;term;update { statement } OR for term{ stmts } OR for { stmts }
+    SWITCH
+        Normal switch:
+        switch x { //auto break at end of each case
+            case 1:
+                stmts
+            case 2:
+                stmts}
+        Tagless switch: case contains a boolean and the first True is executed.
+        switch{
+            case x>1:
+            case x<-1:
+            default:}
+    BREAK & CONTINUE
