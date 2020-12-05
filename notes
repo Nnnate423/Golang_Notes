@@ -102,3 +102,23 @@
         slice: make([]int, 10); make([]int,10,20);
 
 9. Communication
+    9.1 RFC request for comment
+        protocol packages: 
+        "net/http": http.get(url)
+        "net": TCP/IP and socket programming
+            net.Dial("tcp","url:80")
+        JSON: RFC 7159
+            attri-val pair -> struct or map
+            barr,err=json.Marshal(xx) return a byte[]
+            var p Person; err:= json.Unmarshal(barr,&p);
+        io/ioutil:
+        dat,err:=ioutil.ReadFile("xxx.txt"); dat is []byte
+        err:= ioutil.WriteFile("xxx.txt", dat, 0777)
+        os:
+        os.Create()
+        os.Open() -> f,err:=os.Open("xx.txt")
+        os.Close()
+        os.Read() read from file and read into []byte -> f.Read(barr) (make barr first)
+        os.Write()
+
+10. function
