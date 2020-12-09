@@ -1,11 +1,12 @@
 1. go tools
+    '''
     go build xxx.go
     go run xxx.so xxx.txt
     go doc
     go fmt
     go get
     go test
-
+    '''
 2. currency
     goroutine
     channel
@@ -122,3 +123,27 @@
         os.Write()
 
 10. function
+    10.1 main(): func main(){fmt.Printf("...")}
+    10.2 init: func foo(x int) (int,int) {return x,x+1}
+    10.3 call by value: normal-> not affect outside variable
+        call by reference: pass a pointer -> will affect.
+            eg. func foo(y* int) { *y=*y+1}
+                foo(&x)
+            pass array:
+            eg2. func foo(arr *[3]int) int{ (*x)[0]=(*x)[0]+1 }
+                foo(&x)
+            pass slice:
+            eg3. func foo(sli int) int{sli[0]=sli[0]+1}
+                a:=[]int{1,2,3}
+                foo(a)
+    10.4 function can be treated as other variables: can be pass as args, can be created dynamically etc.
+        1. dec a var is function:
+            var funcvar func(int) int
+            func Intinc(x int) int{ return x+1}
+            funcvar=Intinc; funcvar(1)
+        2. pass as args
+            func apply(funcvar func(int) int,x int){return funcvar(x)}
+        3. anonymous func
+            v:=apply(func (x int) int {return x+1}, 2)
+
+    

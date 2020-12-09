@@ -1,1 +1,167 @@
 # Golang_Notes
+# 1. go tools
+```
+    go build xxx.go
+    go run xxx.so xxx.txt
+    go doc
+    go fmt
+    go get
+    go test
+```
+# 2. currency
+```
+    goroutine
+    channel
+    select
+```
+# 3. recommended workspace
+```
+    defined by GOPATH var
+    src
+    pkg
+    bin
+```
+# 4. variable
+```
+    dec: var x,y int
+    types: int, float, string
+    type dec: type temperature float64
+                type ID int
+    init: var x int = 100 OR var x = 100 OR x:=100 (only inside function)
+        uninit var has 0 or empty value.
+
+    pointer: var x *int =&x OR new() returns a pointer -> x := new(int); *x=3
+
+    blocks: {} -> sequence of declaration and statements
+
+    int: int8,int16,...int64, uint8,..., uint 64
+
+    float: float32, float64 -> 
+
+    string: rune (code point is a Unicode character) -> x:="Hi There", each byte is a rune (UTF-8 code point)
+        unicode package: IsSpace(r rune), IsLetter(r rune), ToUpper(r rune)
+        string package: Compare(a,b), Contains(s,sub), HasPrefix(s,sub), Index(s,sub), Replace(s,old,new,n), TrimSpace(s)
+        Strconv package: Atoi(s), FormatFloat() -> float to str, ParseFloat() -> str to float
+    
+    constants: 
+        1. const ( x=4
+            z="Hi")
+        2. iota 
+            type Grade int
+            const(
+                A Grade = iota //1
+                B               //2
+                C               //3
+            )
+
+    type conversion: 
+```
+# 5. Memory
+    heap and stack (mainly inside function)
+    compiler determines stack vs heap
+    garbage collection at background
+
+# 6. fmt
+    6.1 Printf: fmt.Printf("a"+ x)
+                fmt.Printf("a %s", x)
+    6.2 Scan: 
+        var x int;
+        num,err:= fmt.Scan(&x)
+
+# 7. flow control
+```
+    if cond { statement }
+    for init;term;update { statement } OR for term{ stmts } OR for { stmts }
+    SWITCH
+        Normal switch:
+        switch x { //auto break at end of each case
+            case 1:
+                stmts
+            case 2:
+                stmts}
+        Tagless switch: case contains a boolean and the first True is executed.
+        switch{
+            case x>1:
+            case x<-1:
+            default:}
+    BREAK & CONTINUE
+```
+# 8. Data structure
+## 8.1 Array
+        dec: var x [5]int; var x [5]int=[5]{1,2,3,4,5}; x:=[...]{1,2,3,4}; 
+        for loop: for i,v range x{ stmts}; 
+## 8.2 Slice: 
+variable size; ptr to the start; length is num of ele; capacity is max num of eles (start of slice to the end of arr);
+```
+    s1:=x[1:3]; s1:=[]int{1,2,3}; len(); cap()
+    access slice: change slice will change the underlying array and slices also refer to the same array.
+    append: x=append(x,1)
+```
+## 8.3 Hash Table & Maps
+        key/value pairs; len(x)
+        normal dec: var x map[string][int]; x=make(map[string][int]);
+        literal: x:= map[string][int] {"xxx":1 }
+        delete: delete(x,"xxx")
+        two-value: id,p=x["xxx"] -> p is presence of the key
+        for loop: for k,v := range x { stmts }
+## 8.4 Struct
+        type struct Person{
+            id int
+            name string
+        } p1,p2
+        dec: p3:=new(Person) OR p3:=Person(id:1,name="xxx")
+        p1.name="xxx"
+        make
+        slice: make([]int, 10); make([]int,10,20);
+
+# 9. Communication
+## 9.1 RFC request for comment
+        protocol packages: 
+        "net/http": http.get(url)
+        "net": TCP/IP and socket programming
+            net.Dial("tcp","url:80")
+        JSON: RFC 7159
+            attri-val pair -> struct or map
+            barr,err=json.Marshal(xx) return a byte[]
+            var p Person; err:= json.Unmarshal(barr,&p);
+        io/ioutil:
+        dat,err:=ioutil.ReadFile("xxx.txt"); dat is []byte
+        err:= ioutil.WriteFile("xxx.txt", dat, 0777)
+        os:
+        os.Create()
+        os.Open() -> f,err:=os.Open("xx.txt")
+        os.Close()
+        os.Read() read from file and read into []byte -> f.Read(barr) (make barr first)
+        os.Write()
+
+# 10. function
+## 10.1 main(): 
+```
+func main(){fmt.Printf("...")}
+```
+## 10.2 init: 
+```
+func foo(x int) (int,int) {return x,x+1}
+```
+## 10.3 call by value/ reference: 
+        call by value: normal-> not affect outside variable
+        call by reference: pass a pointer -> will affect.
+            eg. func foo(y* int) { *y=*y+1}
+                foo(&x)
+            pass array:
+            eg2. func foo(arr *[3]int) int{ (*x)[0]=(*x)[0]+1 }
+                foo(&x)
+            pass slice:
+            eg3. func foo(sli int) int{sli[0]=sli[0]+1}
+                a:=[]int{1,2,3}
+                foo(a)
+## 10.4 function can be treated as other variables: 
+        eg. can be pass as args, can be created dynamically etc.
+        1. dec a var is function:
+            var funcvar func(int) int
+            func Intinc(x int) int{ return x+1}
+            funcvar=Intinc; funcvar(1)
+        2. pass as args
+            func apply(funcvar func(int) int,x int){return funcvar(x)}
+        3. anonymous func
+            v:=apply(func (x int) int {return x+1}, 2)
