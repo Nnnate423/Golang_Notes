@@ -105,7 +105,7 @@ variable size; ptr to the start; length is num of ele; capacity is max num of el
         two-value: id,p=x["xxx"] -> p is presence of the key
         for loop: for k,v := range x { stmts }
 ## 8.4 Struct
-        type struct Person{
+        type Person struct{
             id int
             name string
         } p1,p2
@@ -165,3 +165,68 @@ func foo(x int) (int,int) {return x,x+1}
             func apply(funcvar func(int) int,x int){return funcvar(x)}
         3. anonymous func
             v:=apply(func (x int) int {return x+1}, 2)
+        4. return a function
+            func makeeg(x,y int) func(int) int{
+                fn:=func (z,q int) int {
+                    return x+y+z+q
+                }
+                return fn
+            }
+        5. Closure
+            function + environment
+            when function is passed -> its environment goes with it
+            above eg, the x and y goes with fn.
+        6. variable args number
+            ...int means take any number of integer.
+            func getmax(vals ...int){
+                for _,v := range vals{
+                    ...
+                }
+            }
+        7. variadic slice argument
+            getmax(1,2,4,6)
+            vslice:=[]int{1,2,4,6}
+            getmax(vslice...)
+        8. defer func call
+        only call is defered.
+        func main(){
+            defer fmt.Println("xxx")
+        }
+
+# 11. Class
+    not conventional object-oriented
+## 11.1 Associating Methods
+1. with data
+```
+type myint int
+func (m myint) foo(int) int{}
+v.foo()
+```
+2. with struct
+```
+type Point struct{
+    x int
+    y int
+} 
+```
+3. encapsulation
+```
+package data
+type Point struct{x,y int}
+func (p Point) init(x,y int){}
+func (p Point) Double(v float64){...}
+...
+package main
+var p data.Point
+p.init()
+...
+```
+## 11.2 Receiver, referencing & dereferencing
+```
+func (p *Point) Modify(x int){
+    p.x=p.x+x
+}
+now this function is able to change p as p is passed by reference.
+And there is no need to deference nor reference, like *(p).x.
+p:=Point(3,4)
+p.Modify(1) -> no need to reference
