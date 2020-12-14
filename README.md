@@ -230,3 +230,86 @@ now this function is able to change p as p is passed by reference.
 And there is no need to deference nor reference, like *(p).x.
 p:=Point(3,4)
 p.Modify(1) -> no need to reference
+```
+## 11.3 OOP Features
+1. Polymorphism\
+    -> override function with same signature
+
+2. Interface\
+signature of the methods
+```
+type Shape interface{
+    Area() float64
+    Perimeter() float64
+}
+# no explicit indication needed
+type Triangle {}
+func (T Triangle) Area() float64 {...}
+func (T Triangke) Perimeter() float64 {...}
+```
+empty interface: interface{}
+```
+func Printme(var interface{}){
+    fmt.Println(var)
+}
+```
+3. concrete types and interface
+```
+func (d *Dog) Speak(){
+    if d==nil {
+        fmt.Println("noise ")
+    }else{
+        fmt.Println(d.name)
+    }
+}
+var s1 Animal
+var d1 Dog{"Bob"}
+s1=d1
+s1.Speak()
+---nil dynamic value with valid dynamic type is allowed---
+var s1 Animal
+var d1 *Dog
+s1=d1
+s1.Speak()
+---nil dynamic type nor value-> cannot call the method---
+var s1 Animal
+s1.Speak() -> error
+``` 
+4. type assertions
+
+type assertions
+```
+func xxx() bool{
+rect,ok:=s.(Rectangle)
+if ok{
+    do something
+}
+Tri,ok:=s.(Triangle)
+if ok {
+    do something
+}}
+```
+type switch
+```
+switch :=sh:=s.(type){
+    case Rectangle:
+        ...
+    case Triangle:
+        ...
+}
+```
+5. error interfance
+```
+type error() interface{
+    Error() string
+}
+```
+if operation correct: err==nil
+
+eg. 
+```
+f,err:=os.Open("xxx")
+if err!=nil {
+    ...
+}
+```
