@@ -1,12 +1,10 @@
 1. go tools
-    '''
     go build xxx.go
     go run xxx.so xxx.txt
     go doc
     go fmt
     go get
     go test
-    '''
 2. currency
     goroutine
     channel
