@@ -171,7 +171,15 @@ System software, collection of system modules.
         * less consumption while threads switching\
             no need to change memory mapping\
             only need to store its dedicated stack
-
+* IPC
+    * Socket\
+    use port number to contact a process.
+    * RPC & RMI \
+    details: 
+    
+    * pipe
+    * Message queue
+    * process shared memory
 
 ## 2.7 CPU and scheduling
 * registers
@@ -180,6 +188,66 @@ System software, collection of system modules.
 * scheduling
 
 ## 2.8 Synchronization
+### 2.8.1 Mutual exclusion
+competing for critical resource (critical section)
+* Dekker\
+busy waiting, pturn, qturn, turn
+* Peterson
+```
+#pricess i
+enter_region(i)
+#critical section
+leave_region(i)
+```
+### 2.8.2 Locks
+* Spinlock -> usually used on multi-core computer \
+-> reduce process switching cost (usually for short-term, fast critical region locking)
+* Semaphore -> P, V operation -> long_term locking as scheduling cost is big
+```
+struc semaphore
+{
+    int count;
+    queueType queue;
+}
+
+P(s)
+{   s.count--;
+    if (s.count<0){ 
+        BLOCK process; 
+        insert into queue; 
+        re-schedule another process;
+    }
+}
+ 
+V(s)
+{   s.count++;
+    // if there are still process waiting
+    if (s.count<=0){
+        wake() one process from s.queue;
+        change its status to READY;
+        insert into READY queue;
+    }
+}
+```
+* Mutex\
+semaphore with count=1
+* futex
+    * mix of user& kernel level lock
+    * avoid unnecessary trap into kernel
+### 2.8.3 Monitor
+1. entering of monitor is mutual exclusion
+2. synchronization: can set condition -> have wait()/wake() operation
+3. consists of condition queue, 
+* HOARE\
+when var c= condition
+    * wait(c)
+    * signal(c)\
+    signal the first process in queue(c), and put current process into urgent queue \
+    -> after it done, switch back to current process
+* MESA
+    two times less of switching than HOARE
+    * signal(c)
+    * notify(c) -> need while loop, timer and broadcast
 
 ## 2.9 Memory & virtual memory
 
