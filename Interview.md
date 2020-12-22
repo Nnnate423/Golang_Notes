@@ -1,6 +1,6 @@
 # interview notes
 # 1. network
-## 1.1 TCP & UDP\
+## 1.1 TCP & UDP
 * TCP 3-way & 4-way handshake
     * start: syn+seq
     * end: fin
@@ -70,7 +70,8 @@
     * reduce traffic load
 * HTTPS protocol
     * TODO
-## 1.4 DNS
+
+## 1.3 DNS
 * a large scale distributed system -> multi-level
 * naming system
 * how it works \
@@ -176,8 +177,17 @@ System software, collection of system modules.
 * registers
     1. visible to users
     2. control & states: PC, PSW (program status word, indicate kernal/ user mode), Stack ptr
+* scheduling
 
-## 2.8 Linux Commands
+## 2.8 Synchronization
+
+## 2.9 Memory & virtual memory
+
+## 2.10 file system
+
+## 2.11 Deadlocks & Classic problems
+
+## 2.12 Linux Commands
 * Performance tools
     * top -u username\
         press k -> enter pid to kill\
@@ -204,13 +214,17 @@ System software, collection of system modules.
     * jobs
     * fg
     * bg -> resume last suspanded bg work (Ctrl-z)
-    
+
 # 3. database
 ## 3.1 Transaction ACID 
 support of transaction -> innoDB?
 * Atomic
 * Consistency
 * Isolation
+    * read uncommitted -> dirty read
+    * read committed -> repeat select in a transaction may give different val
+    * repeatable read -> will snapshot of init select and save for future
+    * serializable -> performance loss 
 * Durability
 
 ## 3.2 SQL
