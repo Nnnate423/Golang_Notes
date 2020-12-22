@@ -249,8 +249,49 @@ when var c= condition
     * signal(c)
     * notify(c) -> need while loop, timer and broadcast
 
-## 2.9 Memory & virtual memory
+* implementation using semaphore
+    * TODO
 
+* __difference to semaphore__
+1. semaphore allows multiple threads to enter the region.
+2. monitor easier to use -> can lock on a certain condition like a shared object.
+
+## 2.9 Memory & virtual memory
+* Overall model:
+
+Memory model|
+------------
+kernel space, 0xFFFF|
+user space, 0x0000 |
+
+* User space model:
+
+User Space |
+------------
+stack, expand down <- SP |
+empty space|
+heap, expand upwards |
+data, literals, const |
+codes <-PC |
+
+* virtual address -> actual address
+    * the address a program have is logical
+    * need MMU to convert it into physical address
+
+* memory management methods
+    * 单一连续区 -> a process gets continuous address space
+    * 固定分区 -> 一个分区一个进程 -> waste & cannot support large process
+    * 可变分区 -> deal with fractions -> memory compaction
+    * 页式 page\
+    user process address space is divided into pages, 4k or 4M, index starts from 0.\
+    Logical address:
+    
+    page number | address in user address space
+    --------------------------------------------
+
+
+    * 段式
+    * 段页式
 ## 2.10 file system
 
 ## 2.11 Deadlocks & Classic problems
