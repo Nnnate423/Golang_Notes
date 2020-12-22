@@ -284,14 +284,24 @@ when var c= condition
     * 可变分区 -> deal with fractions -> memory compaction
     * 页式 page\
     user process address space is divided into pages, 4k or 4M, index starts from 0.\
+    通过页表查询物理地址 \
     Logical address:
-    
-    | page number | address in user address space | 
-    | --- | --- | 
-\
-    通过页表查询物理地址
-    * 段式
+
+    | page number | block number | 
+    | --- | --- |
+
+    * 段式 \
+    [check link for more info](https://blog.csdn.net/wang379275614/article/details/13765599)
     * 段页式
+
+* swapping -> processes switched between memory and disk space
+
+* virtual memory \
+Combination of memory and disk -> to get a very large "memory" \
+an abstraction of physical memory\
+    * 虚拟页式 paging
+
+
 ## 2.10 file system
 
 ## 2.11 Deadlocks & Classic problems
