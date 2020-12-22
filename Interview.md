@@ -21,6 +21,24 @@
     * 53 - DNS
 * sockets
     * a port -> corresponds to program/ process
+* TCP pipelining
+    * selective repeat
+    * go-back-N
+* TCP flow-control & congestion control
+    * flow-control 
+        Windows based -> unacked message cannot be more tham the window size
+    * congestion control
+        * delay based:
+            BBR \
+            -> control rate to be around optimum point
+        * loss based:
+            reno,Cubic \
+            -> only start to control when loss happens \
+            -> the queue can already be very long \
+            -> long response time
+        * AIMD\
+        additive increase: enhance fairness\
+        multiply decrease: speed up converge\
 
 ## 1.2 HTTP & HTTPS
 * persistent & non-persistent
@@ -30,12 +48,15 @@
     * PUT
     * DELETE
     * POST
-    * HEAD
+    * HEAD -> GET with no response body.
 * response status code
     * 200 OK
+    * 204 no content (put)
     * 301 Moved Permanently, location, 
     * 400 Bad Request
     * 404 Not Found
+    * 405 method not allowed (put delete)
+    * 409 conflict (post)
     * 505 HTTP Version Not Supported
 * cookie & session
     * cookie
@@ -62,11 +83,13 @@ System software, collection of system modules.
 * Timesharing OS
 * Real time OS
 * Multi-tasking OS - 多道程序?
+
 ## 2.2 Characters
 1. Concurrency & Parallel
 2. Sharing
 3. Virtual -> every process thinks it owns its virtual address space
 4. Random -> don't know how fast a program executed & respond to random incidents
+
 ## 2.3 Functions
 * Provide abstraction of hardware
 * Provide services to users
@@ -77,11 +100,15 @@ System software, collection of system modules.
     * I/O
     * devices
     * interfaces
+
 ## 2.4 Interrupt & Traps
 * interrupt
     * support parallel operations of CPU & devices
     * external -> from I/O & others
     * asynchronized
+    * signals (around 30)
+        * -9 sigkill - cannot ignore
+
 * trap
     * planed
     * synchronzied
@@ -96,7 +123,9 @@ System software, collection of system modules.
     interrupt_handler starts working and save states into stack -> \
     detect return instruction -> \
     program states recovered from stacks and continue
+
 ## 2.5 System call
+
 
 ## 2.6 Process & thread
 * Process
@@ -148,6 +177,34 @@ System software, collection of system modules.
     1. visible to users
     2. control & states: PC, PSW (program status word, indicate kernal/ user mode), Stack ptr
 
+## 2.8 Linux Commands
+* Performance tools
+    * top -u username\
+        press k -> enter pid to kill\
+        Virtual memory(virt)=Physical mem(res) + swap
+    * vmstat\
+    check system status:
+    mem, io,swap, cpu
+    * iostat\
+    check cpu & i/o status
+    * free -m, ds -ah\
+    check disk space
+    * lsof\
+    list of open files
+* Network
+    * tcpdump -i interface src/dst ip_addr
+        * -D check avail interfaces
+    * netstat 
+        * -a    all tcp udp connections
+        * -at/au    only tcp/udp
+        * -tp   pid
+* process
+    * ps -aux\
+    checka all processes
+    * jobs
+    * fg
+    * bg -> resume last suspanded bg work (Ctrl-z)
+    
 # 3. database
 ## 3.1 Transaction ACID 
 support of transaction -> innoDB?
@@ -155,10 +212,13 @@ support of transaction -> innoDB?
 * Consistency
 * Isolation
 * Durability
+
 ## 3.2 SQL
 
 ## 3.3 NoSQL DB
 * redis
+* MangoDB
+
 # 4. languages
 ## 4.0 OOP
 characters:
@@ -192,9 +252,13 @@ therefore it does not provide additional computing power\
 # 5. docker & VM
 ## 5.1 comparasion
 * docker is lightweight as it built on the OS kernel & they share its libs
-* VM provides better isolations
-* 
-# 6. experience 
+* VM OS level isolations & docker is process level iso
+* docker: same OS kernel, VM is different kernel.
+
+# 6. Data Struture
+
+
+# 7. experience 
 ## 1. C# & C++ dev
 * liveness detection
 * edit the C++ code and load it as a .dll file into C# wrapper
