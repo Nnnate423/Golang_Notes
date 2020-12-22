@@ -260,14 +260,14 @@ when var c= condition
 * Overall model:
 
 Memory model|
-------------
+--- |
 kernel space, 0xFFFF|
 user space, 0x0000 |
 
 * User space model:
 
 User Space |
-------------
+--- |
 stack, expand down <- SP |
 empty space|
 heap, expand upwards |
@@ -287,9 +287,9 @@ codes <-PC |
     Logical address:
     
     page number | address in user address space
-    --------------------------------------------
-
-
+    --- | ---
+\
+    通过页表查询物理地址
     * 段式
     * 段页式
 ## 2.10 file system
