@@ -259,20 +259,20 @@ when var c= condition
 ## 2.9 Memory & virtual memory
 * Overall model:
 
-Memory model|
---- |
-kernel space, 0xFFFF|
-user space, 0x0000 |
+| Memory model |
+|---|
+| kernel space, 0xFFFF |
+| user space, 0x0000 |
 
 * User space model:
 
-User Space |
---- |
-stack, expand down <- SP |
-empty space|
-heap, expand upwards |
-data, literals, const |
-codes <-PC |
+| User Space |
+| --- |
+| stack, expand down <- SP |
+| empty space|
+| heap, expand upwards |
+| data, literals, const |
+| codes <-PC |
 
 * virtual address -> actual address
     * the address a program have is logical
@@ -286,8 +286,8 @@ codes <-PC |
     user process address space is divided into pages, 4k or 4M, index starts from 0.\
     Logical address:
     
-    page number | address in user address space
-    --- | ---
+    | page number | address in user address space | 
+    | --- | --- | 
 \
     通过页表查询物理地址
     * 段式
