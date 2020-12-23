@@ -69,7 +69,12 @@
     * improve performance -> reduce response time
     * reduce traffic load
 * HTTPS protocol
-    * TODO
+    * TLS layer
+    * after 3-way handshake to connect
+    * server sends back public key & certificate
+    * client use this to generate private key (a key encrypted by public key) and send back
+    * server ack the private key.
+    * start communication
 
 ## 1.3 DNS
 * a large scale distributed system -> multi-level
@@ -423,7 +428,44 @@ therefore it does not provide additional computing power\
 * docker: same OS kernel, VM is different kernel.
 
 # 6. Data Struture
+## 6.1 Sorting
+* insertion sort/ selection sort O(n^2)
+* BubbleSort
+* Mergesort
+* quick sort
+* counting sort
+* topological sort
 
+## 6.2 Searching
+* linear search -> O(n)
+* Binary search -> O(log(n))\
+However it requires sorted list
+* BFS
+* DFS
+
+## 6.3 Data structs
+* Tree
+    * binary tree
+    * binary search tree (BST)
+    * heap -> can be used to implement priority queue
+    * tranversal order:
+        1. in-order
+        2. pre-order
+        3. post-order
+
+* linked list
+    * normal linked list
+    * double linked list
+
+* Queue
+
+* Stack
+
+* hashtable/ dictionary
+    * O(1) get
+    * O(1) put
+
+* array
 
 # 7. experience 
 ## 1. C# & C++ dev
