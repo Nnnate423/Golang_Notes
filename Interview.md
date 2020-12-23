@@ -436,12 +436,14 @@ therefore it does not provide additional computing power\
 difficulties:
 1. get used to visual c++ & c#
 2. first time using REST api
+
 ## 2. Python Kafka dev
 * set up kafka message queues
 * accept messages and process -> put into a message queue
 * otherside, use multi-threading to reading from same topic -> consume message and send it using api
 * get result and append to Redis
 * Goal: solve concurrency problem as accept messages faster than the api processing the request. accept message speed 5/s, api 1/s -> open 5 threads.
+
 ## 3. Web app development
 * make use of HTML, CSS, PHP, JS, mysqli
 * select slots and submit, can view my booking etc.
@@ -449,10 +451,15 @@ difficulties:
 
 Problem
 1. should implement transaction
+
 ## 4. Distributed Maze Game
 * Using Java RMI& socket to implement the game
+* Java RMI as a boostraping point -> tracker of current gamers
 * Random game players promoted as logical primary& backup server
 * Fault tolerance, able to perform normally if players/server crash.\
+backup promoted to primary if prim fails
+* multi-threading model -> one dispatcher thread -> one request, one thread
+* backend pinging for certain number of servers -> if dead -> contact servers
 
 
 Problem -> need more precautions
@@ -462,6 +469,29 @@ Problem -> need more precautions
 Difficulties: 
 1. debugging
 2. more than 1 threads using a socket at two code blocks at the same time -> lockings
-## 5. Primary-backup KV Store, Asyn
 
-## 6. Paxos KV Store, Asyn
+## 5. Primary-backup KV Store, Asyn
+* event-driven model & unreliable link
+* set timers for retransmission
+* implement a view server to respond to servers ping requests & return view
+* using view_number to prevent split brain problem -> needs ack with current view number from prim then can proceed to next view
+* Replicated state machine -> prim only sends commands to backup
+* cache all requests received while getting promoted
+* fault tolerance
+
+Difficulties:
+1. replicated commands into server -> server shim -> (At Most Once semantic)
+2. track every requests from each client -> seq number = uuid+ seq
+3. how to make prim & backup linearizable -> seq number in the KV store -> order the sync commands to backup.
+
+## 6. Multi-Paxos KV Store, Asyn
+* using Paxos to implement a replicated state machine
+* servers agree on a command for a certain slot
+* phase 1: prepare; phase 2: accept; phase 3: commit
+* leader election -> reduce conflicts
+* eliminate phase 1 -> nomoreaccepted returned -> if reach majority -> skip phase 1
+
+Problem: 
+1. deadlock
+2. log compaction & garbage collection
+3. cannot deal with configuration change
