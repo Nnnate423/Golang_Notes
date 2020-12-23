@@ -432,8 +432,8 @@ therefore it does not provide additional computing power\
 * insertion sort/ selection sort O(n^2)
 * BubbleSort
 * Mergesort
-* quick sort
-* counting sort
+* quick sort -> O(n^2)
+* counting sort -> O(n)
 * topological sort
 
 ## 6.2 Searching
