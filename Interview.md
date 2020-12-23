@@ -287,8 +287,14 @@ when var c= condition
     通过页表查询物理地址 \
     Logical address:
 
+    | page number | offset (位移量，也是页内地址) | 
+    | --- | --- |
+
+    Memory mapping\
+    -> look up 页表
     | page number | block number | 
     | --- | --- |
+    -> obtain physical memory block address.
 
     * 段式 \
     [check link for more info](https://blog.csdn.net/wang379275614/article/details/13765599)
@@ -299,13 +305,41 @@ when var c= condition
 * virtual memory \
 Combination of memory and disk -> to get a very large "memory" \
 an abstraction of physical memory\
-    * 虚拟页式 paging
-
+    
+    
+* 虚拟页式 paging\
+combination of virtual memory and page.
+1. not all pages are loaded when the process starts
+2. if memory is full, replace old page
+    * TLB -> consists of cache
+    * PAGE FAULT
+    缺页异常(有无空页框？)，违反权限，访问地址错误
+    * looking up process
+    check cache -> not hit -> MMU check page table -> 
+    [click](https://blog.csdn.net/cwl421/article/details/49678371)
+    
+    
+    * Replacement algorithms
+    1. Optimum page replacement algo -> just as a critiria.
+    2. FIFO -> implementation, page linked list
+    3. SCR (second chance) -> FIFO list, check bit R, if 0, replace; if 1, set to 0 and put to the end of list.
+    4. Clock -> circle design + pointer
+    5. NRU not recently used -> check R,M bit, R is clear every period of time
+    6. LRU least recently used -> close to OPT, but cost is large\
+    implementation: double linked list + hashtable
+    7. NFU not frequently used -> software counter
+    8. AGING -> 计数器在+R前右移一位，R加在左端
+    9. 工作集 -> 动态调整活跃页面的工作集
 
 ## 2.10 file system
 
 ## 2.11 Deadlocks & Classic problems
-
+* Conditions of deadlock
+    * mutual exclusion
+    * occupy & wait -> can release before waiting
+    * non-preemptive
+    * circular waiting ->资源的有序分配 - 编号
+    
 ## 2.12 Linux Commands
 * Performance tools
     * top -u username\
