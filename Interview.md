@@ -339,7 +339,7 @@ combination of virtual memory and page.
     * occupy & wait -> can release before waiting
     * non-preemptive
     * circular waiting ->资源的有序分配 - 编号
-    
+
 ## 2.12 Linux Commands
 * Performance tools
     * top -u username\
@@ -432,6 +432,10 @@ therefore it does not provide additional computing power\
 * multi-threading -> worker thread sends request
 * C# web clients & restful API
 * captured image converted to Base64
+
+difficulties:
+1. get used to visual c++ & c#
+2. first time using REST api
 ## 2. Python Kafka dev
 * set up kafka message queues
 * accept messages and process -> put into a message queue
@@ -439,9 +443,25 @@ therefore it does not provide additional computing power\
 * get result and append to Redis
 * Goal: solve concurrency problem as accept messages faster than the api processing the request. accept message speed 5/s, api 1/s -> open 5 threads.
 ## 3. Web app development
+* make use of HTML, CSS, PHP, JS, mysqli
+* select slots and submit, can view my booking etc.
+* make use of session of information 
 
+Problem
+1. should implement transaction
 ## 4. Distributed Maze Game
+* Using Java RMI& socket to implement the game
+* Random game players promoted as logical primary& backup server
+* Fault tolerance, able to perform normally if players/server crash.\
 
+
+Problem -> need more precautions
+1. server should not accept request if another server is online
+2. need more sequencing between prim & backup -> sync request needs sequence number to keep linearizability\
+
+Difficulties: 
+1. debugging
+2. more than 1 threads using a socket at two code blocks at the same time -> lockings
 ## 5. Primary-backup KV Store, Asyn
 
 ## 6. Paxos KV Store, Asyn
