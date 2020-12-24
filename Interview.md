@@ -62,8 +62,12 @@
     * cookie
         * A cookie is used to create a user session layer on the top of stateless HTTP .
         * can be used to identify user and track activity.
+        * stored on client browser
     * session
-        * TODO
+        * In PHP, a session provides a way to store visitor preferences on a web server in the form of variables that can be used across multiple pages.
+        * The information is retrieved from the web server when a session is opened at the beginning of each web page. The session expires when the web page is closed.
+        * each client has its own session
+        * web server maintains the information
 * web caching
     * A Web cache or a proxy server is a network entity that satisfies HTTP requests on behalf of an origin Web server
     * improve performance -> reduce response time
@@ -191,7 +195,7 @@ System software, collection of system modules.
     1. visible to users
     2. control & states: PC, PSW (program status word, indicate kernal/ user mode), Stack ptr
 * scheduling
-
+    TODO
 ## 2.8 Synchronization
 ### 2.8.1 Mutual exclusion
 competing for critical resource (critical section)
