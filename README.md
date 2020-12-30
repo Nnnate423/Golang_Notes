@@ -9,11 +9,76 @@
     go test
 ```
 # 2. currency
+## 1. goroutine
+    not visible to OS by default
+    * logical processor\
+        if only 1 logical processor -> goroutines run concurrently, no parallel\
+        but we can change num of logical processors so that they can map to goroutines
+    * interleaving -> state not deterministic\
+        order of execution between concurrent task is not known
+    * race conditions\
+        outcome depends on non-deterministic ordering
+    * create goroutine
+    ```
+    go foo()
+    ```
+    * early exit
+    if main thread finish -> goroutines will early exit.
+    ```
+    func main(){
+        go printsth()
+        printsth() //maybe only this will be printed
+    }
+    ```
+    * synchronization\
+    sync package
+        * wait groups\
+        sync.WaitGroup, contains a internal counter:
+        increment counter for each goroutine to wait for\
+        it go through if counter is 0.
+        ```
+        wg.Add(x) -> called on waiting thread.
+        wg.Done() -> called on waited goroutines
+        wg.wait() -> blocking call
+        ```
+## 2. channel
+Typed, c:=make(chan, int)
 ```
-    goroutine
-    channel
-    select
+c <- 3
+x := <- c
+//an example
+func prod(v1 int, v2 int, c chan int){
+    c<- v1*v2
+}
+func main(){
+    c:=make (chan,int)
+    go prod(1,2,c)
+    go prod(2,3,c)
+    a:=<-c
+    b:=<-c
+    fmt.Printf(a*b)
+}
 ```
+
+* Unbuffered channel\
+it cannot hold data -> "c<-3" will block until 3 is read by other thread with "x := <-c", and vice versa\
+can be directly used for synchronization (wait() & notify()), "c<-3" & "<-c".
+
+* buffered chan\
+sending will only block when buffer is full\
+receiving blocks when buffer is empty\
+use of buffer: sender(producer) & receiver (consumer) do not need to operate at same speed.
+```
+c:=make(chan int, 10)
+//iterate
+for i := range c{
+    fmt.Println(i)
+}
+```
+
+
+## 3. select
+
 # 3. recommended workspace
 ```
     defined by GOPATH var
@@ -116,23 +181,31 @@ variable size; ptr to the start; length is num of ele; capacity is max num of el
 
 # 9. Communication
 ## 9.1 RFC request for comment
-        protocol packages: 
-        "net/http": http.get(url)
-        "net": TCP/IP and socket programming
-            net.Dial("tcp","url:80")
-        JSON: RFC 7159
-            attri-val pair -> struct or map
-            barr,err=json.Marshal(xx) return a byte[]
-            var p Person; err:= json.Unmarshal(barr,&p);
-        io/ioutil:
-        dat,err:=ioutil.ReadFile("xxx.txt"); dat is []byte
-        err:= ioutil.WriteFile("xxx.txt", dat, 0777)
-        os:
-        os.Create()
-        os.Open() -> f,err:=os.Open("xx.txt")
-        os.Close()
-        os.Read() read from file and read into []byte -> f.Read(barr) (make barr first)
-        os.Write()
+
+* protocol packages:\
+    "net/http": http.get(url)\
+    "net": TCP/IP and socket programming\
+            
+        net.Dial("tcp","url:80")
+* JSON: RFC 7159
+    ```
+    attri-val pair -> struct or map
+    barr,err=json.Marshal(xx) return a byte[]
+    var p Person; err:= json.Unmarshal(barr,&p);
+    ```
+* io/ioutil:
+    ```
+    dat,err:=ioutil.ReadFile("xxx.txt"); dat is []byte
+    err:= ioutil.WriteFile("xxx.txt", dat, 0777)
+    ```
+    * os:
+    ```
+    os.Create()
+    os.Open() -> f,err:=os.Open("xx.txt")
+    os.Close()
+    os.Read() read from file and read into []byte -> f.Read(barr) (make barr first)
+    os.Write()
+    ```
 
 # 10. function
 ## 10.1 main(): 
