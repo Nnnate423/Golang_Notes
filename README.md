@@ -70,7 +70,7 @@ receiving blocks when buffer is empty\
 use of buffer: sender(producer) & receiver (consumer) do not need to operate at same speed.
 ```
 c:=make(chan int, 10)
-//iterate
+//iterate until sender called close(c)
 for i := range c{
     fmt.Println(i)
 }
@@ -79,6 +79,36 @@ for i := range c{
 
 ## 3. select
 
+```
+select {
+    case a = <-c1:
+        fmt.Println(a)
+    case b = <-c2:
+        fmt.Println(b)    
+}
+```
+Both Send and Receive can be selected
+```
+select {
+    case a = <-chanin:
+
+    case chanout <- b:
+        //if nobody is receiving on outchan it will block
+    default:
+        //xxx
+}
+```
+Abort can be used
+```
+for {
+    select{
+        case a <-c:
+
+        case <- abort:
+            return
+    }
+}
+```
 # 3. recommended workspace
 ```
     defined by GOPATH var
