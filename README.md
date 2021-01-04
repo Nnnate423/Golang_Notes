@@ -9,7 +9,7 @@
     go test
 ```
 # 2. currency
-## 1. goroutine
+## 2.1. goroutine
     not visible to OS by default
     * logical processor\
         if only 1 logical processor -> goroutines run concurrently, no parallel\
@@ -41,7 +41,7 @@
         wg.Done() -> called on waited goroutines
         wg.wait() -> blocking call
         ```
-## 2. channel
+## 2.2. channel
 Typed, c:=make(chan, int)
 ```
 c <- 3
@@ -77,7 +77,7 @@ for i := range c{
 ```
 
 
-## 3. select
+## 2.3. select
 
 ```
 select {
@@ -109,6 +109,27 @@ for {
     }
 }
 ```
+
+## 2.4. Mutual exclusion
+* mutex\
+sync.Mutex -> a binart semaphore
+```
+m.Lock()
+task()
+m.unlock()
+```
+
+* Once\
+sync.Once
+```
+//func f will only execute once
+once.Do(f)
+```
+And all call to Do() will block until the first Do() returns.\
+Ideal for one-time initialization.
+
+* deadlock -> circular dependencies
+
 # 3. recommended workspace
 ```
     defined by GOPATH var
