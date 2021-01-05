@@ -2,8 +2,12 @@
 # 1. network
 ## 1.1 TCP & UDP
 * TCP 3-way & 4-way handshake
-    * start: syn+seq
-    * end: fin
+    * start: SYN -> SYN + ACK -> ACK
+    * end: FIN\
+    this is two way termination:\
+    client first send FIN -> to indicate I want to close connection\
+    but server may not ready to close as its buffer or queue not clear\
+    when server is certain that it has no more data to send -> then it will send server side FIN to client.
 * TCP & UDP comparasion
     * connection or conntectionless
     * stream-orient or datagram-orient
@@ -20,6 +24,8 @@
     * 23 - telnet
     * 53 - DNS
 * sockets
+    * encapsulation of TCP/IP protocol, an API -> easy for programmer to use
+    * ip + port
     * a port -> corresponds to program/ process
 * TCP pipelining
     * selective repeat
