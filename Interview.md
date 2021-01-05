@@ -240,9 +240,51 @@ V(s)
 ```
 * Mutex\
 semaphore with count=1
+
 * futex
     * mix of user& kernel level lock
     * avoid unnecessary trap into kernel
+
+* rwlock\
+shared-exclusive lock: suitable for read frequency much larger than write frequency cases.\
+It ensures that thread only read latest values -> if this is not required, than no need for read lock.
+    * if there is no write lock acquired -> any thread can apply read lock
+    * if there is a read lock acquired -> no thread can apply write lock
+```
+/* 读模式下加锁  */
+int pthread_rwlock_rdlock (pthread_rwlock_t *__rwlock);
+ 
+/* 非阻塞的读模式下加锁  成功返回0，失败返回错误码*/
+int pthread_rwlock_tryrdlock (pthread_rwlock_t *__rwlock);
+ 
+# ifdef __USE_XOPEN2K
+/*  限时等待的读模式加锁 */
+int pthread_rwlock_timedrdlock (pthread_rwlock_t *__restrict __rwlock,
+                                       __const struct timespec *__restrict __abstime);
+# endif
+ 
+/* 写模式下加锁  */
+int pthread_rwlock_wrlock (pthread_rwlock_t *__rwlock);
+ 
+/* 非阻塞的写模式下加锁 */
+int pthread_rwlock_trywrlock (pthread_rwlock_t *__rwlock);
+ 
+# ifdef __USE_XOPEN2K
+/* 限时等待的写模式加锁 */
+int pthread_rwlock_timedwrlock (pthread_rwlock_t *__restrict __rwlock,
+                                       __const struct timespec *__restrict __abstime);
+# endif
+ 
+/* 解锁 */
+int pthread_rwlock_unlock (pthread_rwlock_t *__rwlock);
+```
+In java: 写锁可降级
+```
+rwl.writeLock().lock()
+rwl.readLock().lock()
+rwl.writeLock().unlock()
+//now write lock has been changed to read lock.
+```
 ### 2.8.3 Monitor
 1. entering of monitor is mutual exclusion
 2. synchronization: can set condition -> have wait()/wake() operation
@@ -264,6 +306,12 @@ when var c= condition
 * __difference to semaphore__
 1. semaphore allows multiple threads to enter the region.
 2. monitor easier to use -> can lock on a certain condition like a shared object.
+
+### 2.8.4 Java wait() & notify()
+obj methods -> can only be used inside synchronized(obj){...}\
+wait(): release obj lock, wait for notify()\
+notify(): wake up a thread waiting for obj lock, and let it gets the lock\
+notifyall(): wake up all threads waiting for obj lock. -> threads will compete for the obj lock.
 
 ## 2.9 Memory & virtual memory
 * Overall model:

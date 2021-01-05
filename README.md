@@ -10,37 +10,37 @@
 ```
 # 2. currency
 ## 2.1. goroutine
-    not visible to OS by default
-    * logical processor\
-        if only 1 logical processor -> goroutines run concurrently, no parallel\
-        but we can change num of logical processors so that they can map to goroutines
-    * interleaving -> state not deterministic\
-        order of execution between concurrent task is not known
-    * race conditions\
-        outcome depends on non-deterministic ordering
-    * create goroutine
+not visible to OS by default
+* logical processor\
+    if only 1 logical processor -> goroutines run concurrently, no parallel\
+    but we can change num of logical processors so that they can map to goroutines
+* interleaving -> state not deterministic\
+    order of execution between concurrent task is not known
+* race conditions\
+    outcome depends on non-deterministic ordering
+* create goroutine
+```
+go foo()
+```
+* early exit
+if main thread finish -> goroutines will early exit.
+```
+func main(){
+    go printsth()
+    printsth() //maybe only this will be printed
+}
+```
+* synchronization\
+sync package
+    * wait groups\
+    sync.WaitGroup, contains a internal counter:
+    increment counter for each goroutine to wait for\
+    it go through if counter is 0.
     ```
-    go foo()
+    wg.Add(x) -> called on waiting thread.
+    wg.Done() -> called on waited goroutines
+    wg.wait() -> blocking call
     ```
-    * early exit
-    if main thread finish -> goroutines will early exit.
-    ```
-    func main(){
-        go printsth()
-        printsth() //maybe only this will be printed
-    }
-    ```
-    * synchronization\
-    sync package
-        * wait groups\
-        sync.WaitGroup, contains a internal counter:
-        increment counter for each goroutine to wait for\
-        it go through if counter is 0.
-        ```
-        wg.Add(x) -> called on waiting thread.
-        wg.Done() -> called on waited goroutines
-        wg.wait() -> blocking call
-        ```
 ## 2.2. channel
 Typed, c:=make(chan, int)
 ```
