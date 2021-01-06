@@ -470,6 +470,9 @@ b.say()
 as GIL exists, python threads can only progress concurrently, not parallel\
 therefore it does not provide additional computing power\
 -> I/O intense tasks are prefered.
+### OOP
+type()\
+dir(obj) -> show all the methods including magic functions
 ## 4.3 Golang
 
 ## 4.4 shell scripting
@@ -479,6 +482,7 @@ therefore it does not provide additional computing power\
 
 ### 4.4.3 awk
 
+## 4.5 deep copy & shallow copy
 # 5. docker & VM
 ## 5.1 comparasion
 * docker is lightweight as it built on the OS kernel & they share its libs
