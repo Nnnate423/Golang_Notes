@@ -66,14 +66,17 @@
     * 505 HTTP Version Not Supported
 * cookie & session
     * cookie
-        * A cookie is used to create a user session layer on the top of stateless HTTP .
+        * A cookie is used to create a user session layer on the top of stateless HTTP.
         * can be used to identify user and track activity.
         * stored on client browser
+        * user browser may have a sessionid as cookie and append it in every request\
+         -> server knows which session to look up to
     * session
         * In PHP, a session provides a way to store visitor preferences on a web server in the form of variables that can be used across multiple pages.
         * The information is retrieved from the web server when a session is opened at the beginning of each web page. The session expires when the web page is closed.
         * each client has its own session
         * web server maintains the information
+        * sessions are required for implementing login function
 * web caching
     * A Web cache or a proxy server is a network entity that satisfies HTTP requests on behalf of an origin Web server
     * improve performance -> reduce response time
@@ -473,6 +476,9 @@ therefore it does not provide additional computing power\
 ### OOP
 type()\
 dir(obj) -> show all the methods including magic functions
+### shortcut functions
+count = collections.Count(some_list) -> return a dict with frequency as value.
+dict.get(x,0) -> if x not exist, return 0, can be 1 less "if else"
 ## 4.3 Golang
 
 ## 4.4 shell scripting
