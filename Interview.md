@@ -58,7 +58,8 @@
 * response status code
     * 200 OK
     * 204 no content (put)
-    * 301/302 Moved Permanently, location, redirct
+    * 301& 302 Moved Permanently & temply, location, django: redirct
+    * 304 not modified -> static file loaded 
     * 400 Bad Request
     * 404 Not Found
     * 405 method not allowed (put delete)
