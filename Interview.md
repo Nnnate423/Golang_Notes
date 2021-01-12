@@ -571,7 +571,7 @@ Problem
 backup promoted to primary if prim fails
 * multi-threading model -> one dispatcher thread -> one request, one thread
 * backend pinging for certain number of servers -> if dead -> contact servers
-
+* currency handling -> synchronized on server & avoid open multiple sockets to same server at a time.
 
 Problem -> need more precautions
 1. server should not accept request if another server is online
@@ -606,3 +606,9 @@ Problem:
 1. deadlock
 2. log compaction & garbage collection
 3. cannot deal with configuration change
+
+## 7. Microsoft Access development
+
+## 8. Django
+* ToDo app -> add task via form, and able to delete and modify
+* reconstruct ## 3 project using django as backend -> for modern development
