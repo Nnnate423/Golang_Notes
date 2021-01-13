@@ -211,9 +211,21 @@ System software, collection of system modules.
 * IPC
     * Socket\
     use port number to contact a process.
-    * RPC & RMI \
-    details: 
-    
+    * RPC & RMI 
+        * details: \
+        Client Stub & Server Skeleton：They are agent responsible for sending parameters of remote calls and\
+        hide RPC details from programmer\
+        Registry：Server bind its remote obj to it so that the client can lookup the stub using its naming.\
+        The stub and skeleton uses tcp sockets as underlying communicaiton.\
+        all obj passed through RMI needs to extends serializable interface.
+        * Process: 
+            1. Server extends Remote interface
+            2. Server implement its interface and extends UnicastObject
+            3. Server bind its remote obj into rmiregistry
+            4. client lookup with the name -> obtain stub
+            5. client call remote methods -> stub send serialized parameter/obj to server skeleton
+            6. server deserialize the request and send response
+            7. stub deserialize reply for client    
     * pipe
     * Message queue
     * process shared memory
