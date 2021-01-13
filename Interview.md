@@ -89,6 +89,10 @@
     * client use this to generate private key (a key encrypted by public key) and send back
     * server ack the private key.
     * start communication
+* DHCP -> bootstrap
+    * as computer first starts up, it has no IP address
+    * therefore it cannot use TCP -> only UDP, 0.0.0.0 as source and 255.255.255.255 as dest to broadcast
+    * receive an ip address in LAN -> convert to WAN IP through router if it has request.
 
 ## 1.3 DNS
 * a large scale distributed system -> multi-level
@@ -608,8 +612,16 @@ Problem:
 3. cannot deal with configuration change
 
 ## 7. Microsoft Access development
+* ER-diagram
+* implementation
 
 ## 8. Django
 * ToDo app -> add task via form, and able to delete and modify
 * reconstruct ## 3 project using django as backend -> for modern development
 * transaction supported
+
+## 9. Attire Checking system
+* integrate with sensors and gentry with motors
+* data collection, processing
+* objection recognition with pretrained model
+* application to run inference and open/close gentry.
