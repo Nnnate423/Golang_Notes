@@ -612,3 +612,4 @@ Problem:
 ## 8. Django
 * ToDo app -> add task via form, and able to delete and modify
 * reconstruct ## 3 project using django as backend -> for modern development
+* transaction supported
