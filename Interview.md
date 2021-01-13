@@ -1,7 +1,12 @@
 # interview notes
-##### Table of Contents
+### Table of Contents
 1. [ Network ](#network)
 2. [ Operating System ](#OS)
+3. [ Database ](#db)
+4. [ languages ](#languages)
+5. [ Docker & VM ](#docker)
+6. [ Data Structure ](#data_structure)
+7. [ Experience ](#experience)
 
 <a name="network"></a>
 # 1. network
@@ -446,6 +451,7 @@ combination of virtual memory and page.
     * fg
     * bg -> resume last suspanded bg work (Ctrl-z)
 
+<a name="db"></a>
 # 3. database
 ## 3.1 Transaction ACID 
 support of transaction -> innoDB?
@@ -583,6 +589,7 @@ WHERE column2 IS NULL;
 * redis
 * MangoDB
 
+<a name="languages"></a>
 # 4. languages
 ## 4.0 OOP
 characters:
@@ -620,12 +627,15 @@ dict.get(x,0) -> if x not exist, return 0, can be 1 less "if else"
 ### 4.4.3 awk
 
 ## 4.5 deep copy & shallow copy
+
+<a name="docker"></a>
 # 5. docker & VM
 ## 5.1 comparasion
 * docker is lightweight as it built on the OS kernel & they share its libs
 * VM OS level isolations & docker is process level iso
 * docker: same OS kernel, VM is different kernel.
 
+<a name="data_structure"></a>
 # 6. Data Struture
 ## 6.1 Sorting
 * insertion sort/ selection sort O(n^2)
@@ -666,6 +676,7 @@ However it requires sorted list
 
 * array
 
+<a name="experience"></a>
 # 7. experience 
 ## 1. C# & C++ dev
 * liveness detection
