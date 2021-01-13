@@ -1,4 +1,9 @@
 # interview notes
+##### Table of Contents
+1. [ Network ](#network)
+2. [ Operating System ](#OS)
+
+<a name="network"></a>
 # 1. network
 ## 1.1 TCP & UDP
 * TCP 3-way & 4-way handshake
@@ -100,6 +105,8 @@
 * how it works \
 brower URL -> look up in local DNS -> if not found -> look up level DNS -> return IP -> establish TCP/IP connection -> send HTTP request to the server
 
+
+<a name="OS"></a>
 # 2. operating system
 System software, collection of system modules.
 ## 2.1 OS types
@@ -452,6 +459,125 @@ support of transaction -> innoDB?
 * Durability
 
 ## 3.2 SQL
+### 3.2.1 Create & populate Tables
+* constraints
+    * PRIMARY KEY
+    * FOREIGN KEY, REFERENCES tablename(entry1,entry2)
+    * NOT NULL
+    * UNIQUE -> unique + not null = candidate key
+    * CHECK, CHECK (price > 0)
+* diff between view and a new sub-table
+    '''
+    CREATE VIEW singapore_customers1 AS
+    SELECT c.first_name, c.last_name
+    FROM customers c 
+    WHERE country='Singapore';
+    '''
+    * view updated with the original table
+    * a new table will not auto updated
+
+### 3.2.2 Logic
+* CASE 
+'''
+CASE 
+    WHEN
+    THEN
+    ELSE
+END
+'''
+* WHERE AND
+'''
+WHERE (X=Y AND Z=Y)
+AND (XXX BETWEEN 1 AND 10)
+'''
+* COALESCE(col2 , 0)
+```
+SELECT column1, column2, COALESCE(column2, 0) %if column2 is null, return 0
+FROM example
+WHERE column2 IS NULL;
+```
+### 3.3.3 quires
+* Aggregate query
+    * count()
+    '''
+    SELECT COUNT(DISTINCT c.customerid) 
+    FROM customers c;
+    '''
+    * MAX()
+    * AVG()
+    * GROUP BY
+    apply aggregate func on groups
+    ```
+    SELECT c.first_name, c.last_name, SUM(g.price)
+    FROM customers c, downloads d, games g
+    WHERE c.customerid = d.customerid
+    AND d.name = g.name AND d.version = g.version
+    GROUP BY c.customerid, c.first_name, c.last_name;
+    ```
+    * SUM()
+    * EXTRACT()
+    ```
+    SELECT c.country, EXTRACT(YEAR FROM c.since ) AS regyear, COUNT(*) AS total
+    FROM customers c, downloads d
+    WHERE c.customerid = d.customerid
+    GROUP BY c.country, regyear
+    ORDER BY regyear, c.country;
+    ```
+    * HAVING -> aggregate func not allowed in where
+    ```
+    SELECT c.country
+    FROM customers c
+    GROUP BY c.country
+    HAVING COUNT(*) >= 100;
+    ```
+* nested queries
+    *  (NOT) IN, ANY, ALL(similar to max)
+    ```
+    SELECT d.name
+    FROM  downloads d
+    WHERE d.customerid = ANY (
+    SELECT c.customerid
+    FROM customers c
+    WHERE c.country = 'Singapore');
+        
+    SELECT g1.name, g1.version, g1.price
+    FROM  games g1
+    WHERE g1.price >= ALL (
+    SELECT g2.price
+    FROM  games g2);
+        
+    SELECT g1.name, g1.version, g1.price
+    FROM  games g1
+    WHERE g1.price >= ANY (
+    SELECT g2.price
+    FROM  games g2);
+
+    SELECT c1.country
+    FROM customers c1
+    GROUP BY c1.country
+    HAVING COUNT(*) >= ALL (
+    SELECT COUNT(*)
+    FROM customers c2
+    GROUP BY c2.country);
+    ```
+    * EXIST -> test if there is any result
+    ```
+    SELECT c.first_name, c.last_name
+    FROM customers c
+    WHERE NOT EXISTS( 
+    SELECT *   
+    FROM games g  
+    WHERE g.name ='Aerified'  
+    AND NOT EXISTS (      
+    SELECT *      
+    FROM downloads d     
+    WHERE d.customerid = c.customerid     
+    AND d.name = g.name      
+    AND d.version = g.version));
+    ```
+    * UNION, INTERSECT, EXCEPT
+
+
 
 ## 3.3 NoSQL DB
 * redis
