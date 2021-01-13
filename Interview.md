@@ -114,7 +114,7 @@ brower URL -> look up in local DNS -> if not found -> look up level DNS -> retur
 
 
 <a name="OS"></a>
-# 2. operating system
+# 2. [ Operating System ](#toc)
 System software, collection of system modules.
 ## 2.1 OS types
 * batch OS - 批处理, SPOOLING
@@ -454,7 +454,7 @@ combination of virtual memory and page.
     * bg -> resume last suspanded bg work (Ctrl-z)
 
 <a name="db"></a>
-# 3. database
+# 3. [ Database ](#toc)
 ## 3.1 Transaction ACID 
 support of transaction -> innoDB?
 * Atomic
@@ -592,7 +592,7 @@ WHERE column2 IS NULL;
 * MangoDB
 
 <a name="languages"></a>
-# 4. languages
+# 4. [ Languages ](#toc)
 ## 4.0 OOP
 characters:
 * Abstraction -> interfaces
@@ -631,14 +631,14 @@ dict.get(x,0) -> if x not exist, return 0, can be 1 less "if else"
 ## 4.5 deep copy & shallow copy
 
 <a name="docker"></a>
-# 5. docker & VM
+# 5. [ Docker & VM ](#toc)
 ## 5.1 comparasion
 * docker is lightweight as it built on the OS kernel & they share its libs
 * VM OS level isolations & docker is process level iso
 * docker: same OS kernel, VM is different kernel.
 
 <a name="data_structure"></a>
-# 6. Data Struture
+# 6. [ Data Structure ](#toc)
 ## 6.1 Sorting
 * insertion sort/ selection sort O(n^2)
 * BubbleSort
@@ -679,7 +679,7 @@ However it requires sorted list
 * array
 
 <a name="experience"></a>
-# 7. experience 
+# 7. [ Experience ](#toc)
 ## 1. C# & C++ dev
 * liveness detection
 * edit the C++ code and load it as a .dll file into C# wrapper
