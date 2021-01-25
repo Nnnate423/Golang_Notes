@@ -1,439 +1,790 @@
-# Golang_Notes
-# 1. go tools
+# interview notes
+<a name="toc"></a>
+### Table of Contents
+1. [ Network ](#network)
+2. [ Operating System ](#OS)
+3. [ Database ](#db)
+4. [ languages ](#languages)
+5. [ Docker & VM ](#docker)
+6. [ Data Structure ](#data_structure)
+7. [ Experience ](#experience)
+
+
+<a name="network"></a>
+# 1. [ Network ](#toc)
+## 1.1 TCP & UDP
+* TCP 3-way & 4-way handshake
+    * start: SYN -> SYN + ACK -> ACK
+    * end: FIN\
+    this is two way termination:\
+    client first send FIN -> to indicate I want to close connection\
+    but server may not ready to close as its buffer or queue not clear\
+    when server is certain that it has no more data to send -> then it will send server side FIN to client.
+* TCP & UDP comparasion
+    * connection or conntectionless
+    * stream-orient or datagram-orient
+    * __reliable or not__
+    * heading length difference, UDP 8 bytes, TCP 20 bytes?
+    * TCP has __flow control__ and __congestion control__
+* TCP reliable techniques
+    * ack (number) -> deal with segment corrupted
+    * sequence number -> deal with reply corrupted
+    * sender timer & retransmission -> deal with req/reply lost
+* well-known ports
+    * 20/21 - ftp
+    * 22 - SSH
+    * 23 - telnet
+    * 53 - DNS
+* sockets
+    * encapsulation of TCP/IP protocol, an API -> easy for programmer to use
+    * ip + port
+    * a port -> corresponds to program/ process
+* TCP pipelining
+    * selective repeat
+    * go-back-N
+* TCP flow-control & congestion control
+    * flow-control 
+        Windows based -> unacked message cannot be more tham the window size
+    * congestion control
+        * delay based:
+            BBR \
+            -> control rate to be around optimum point
+        * loss based:
+            reno,Cubic \
+            -> only start to control when loss happens \
+            -> the queue can already be very long \
+            -> long response time
+        * AIMD\
+        additive increase: enhance fairness\
+        multiply decrease: speed up converge\
+
+## 1.2 HTTP & HTTPS
+* persistent & non-persistent
+* response time (rely on TCP)-> two RTT
+* HTTP method (REST API)
+    * GET
+    * PUT
+    * DELETE
+    * POST
+    * HEAD -> GET with no response body.
+* response status code
+    * 200 OK
+    * 204 no content (put)
+    * 301& 302 Moved Permanently & temply, location, django: redirct
+    * 304 not modified -> static file loaded 
+    * 400 Bad Request
+    * 404 Not Found
+    * 405 method not allowed (put delete)
+    * 409 conflict (post)
+    * 505 HTTP Version Not Supported
+* cookie & session
+    * cookie
+        * A cookie is used to create a user session layer on the top of stateless HTTP.
+        * can be used to identify user and track activity.
+        * stored on client browser
+        * user browser may have a sessionid as cookie and append it in every request\
+         -> server knows which session to look up to
+    * session
+        * In PHP, a session provides a way to store visitor preferences on a web server in the form of variables that can be used across multiple pages.
+        * The information is retrieved from the web server when a session is opened at the beginning of each web page. The session expires when the web page is closed.
+        * each client has its own session
+        * web server maintains the information
+        * sessions are required for implementing login function
+* web caching
+    * A Web cache or a proxy server is a network entity that satisfies HTTP requests on behalf of an origin Web server
+    * improve performance -> reduce response time
+    * reduce traffic load
+* HTTPS protocol
+    * TLS layer
+    * after 3-way handshake to connect
+    * server sends back public key & certificate
+    * client use this to generate private key (a key encrypted by public key) and send back
+    * server ack the private key.
+    * start communication
+* DHCP -> bootstrap
+    * as computer first starts up, it has no IP address
+    * therefore it cannot use TCP -> only UDP, 0.0.0.0 as source and 255.255.255.255 as dest to broadcast
+    * receive an ip address in LAN -> convert to WAN IP through router if it has request.
+
+## 1.3 DNS
+* a large scale distributed system -> multi-level
+* naming system
+* how it works \
+brower URL -> look up in local DNS -> if not found -> look up level DNS -> return IP -> establish TCP/IP connection -> send HTTP request to the server
+
+
+<a name="OS"></a>
+# 2. [ Operating System ](#toc)
+System software, collection of system modules.
+## 2.1 OS types
+* batch OS - 批处理, SPOOLING
+* Timesharing OS
+* Real time OS
+* Multi-tasking OS - 多道程序?
+
+## 2.2 Characters
+1. Concurrency & Parallel
+2. Sharing
+3. Virtual -> every process thinks it owns its virtual address space
+4. Random -> don't know how fast a program executed & respond to random incidents
+
+## 2.3 Functions
+* Provide abstraction of hardware
+* Provide services to users
+* Resource management
+    * CPU management -> scheduling
+    * Storage management
+    * memory management
+    * I/O
+    * devices
+    * interfaces
+
+## 2.4 Interrupt & Traps
+* interrupt
+    * support parallel operations of CPU & devices
+    * external -> from I/O & others
+    * asynchronized
+    * signals (around 30)
+        * -9 sigkill - cannot ignore
+
+* trap
+    * planed
+    * synchronzied
+* Fault & execption
+    * internal -> from program
+    * synchronized
+* interrupt vector table\
+    __handle interrupt__: \
+    hardware send interrupt signal -> \
+    CPU preparation: user mode to kernal mode and push PC& PSW into stack -> \
+    look up interrupt vector table -> \
+    interrupt_handler starts working and save states into stack -> \
+    detect return instruction -> \
+    program states recovered from stacks and continue
+
+## 2.5 System call
+
+
+## 2.6 Process & thread
+* Process
+    * __Process control block__ (PCB) - task_struct in linuc
+        * includes PID, name, userID, relations, states, priority, code entry, queue pointer, virtual memory space, \
+        file lists, CPU information like PSW,PC, stack pointer & pages pointers
+    * unit of resource allocation:
+        * memory space
+        * files
+        * address space (??)
+    * process states
+        * Running
+        * Ready
+        * waiting/blocked
+        * suspended
+        * new & terminated
+    * creation of process
+        * fock() in linux 
+        ```
+        pid=fork()
+        if (pid<0){//err}
+        if (pid==0){//new process}
+        else {//old process}
+        ```
+       1. Allocate PID,PCB
+       2. allocation location/space
+       3. ini PCB (state=new)
+       4. set queue pointer -> start queueing 
+* Thread
+    * unit of scheduling
+    * System level -> windows
+        * use System calls to create
+    * User level
+        * cannot take advantages of multi-processing by definition as it cannot rely on kernel
+        * not visible to OS
+        * if one thread hang -> all threads hang (correct?)
+        * eg. java threads are user-level threads but they mapped to kernel-level threads so that they can still use multi-processing.
+    * LWP thread
+    * advantages over processes
+        * ease of communication -> shared heap memory, no need kernel
+        * lightweight to create and terminate
+        * less consumption while threads switching\
+            no need to change memory mapping\
+            only need to store its dedicated stack
+* IPC
+    * Socket\
+    use port number to contact a process.
+    * RPC & RMI 
+        * details: \
+        Client Stub & Server Skeleton：They are agent responsible for sending parameters of remote calls and\
+        hide RPC details from programmer\
+        Registry：Server bind its remote obj to it so that the client can lookup the stub using its naming.\
+        The stub and skeleton uses tcp sockets as underlying communicaiton.\
+        all obj passed through RMI needs to extends serializable interface.
+        * Process: 
+            1. Server extends Remote interface
+            2. Server implement its interface and extends UnicastObject
+            3. Server bind its remote obj into rmiregistry
+            4. client lookup with the name -> obtain stub
+            5. client call remote methods -> stub send serialized parameter/obj to server skeleton
+            6. server deserialize the request and send response
+            7. stub deserialize reply for client    
+    * pipe
+    * Message queue
+    * process shared memory
+
+## 2.7 CPU and scheduling
+* registers
+    1. visible to users
+    2. control & states: PC, PSW (program status word, indicate kernal/ user mode), Stack ptr
+* scheduling
+    TODO
+## 2.8 Synchronization
+### 2.8.1 Mutual exclusion
+competing for critical resource (critical section)
+* Dekker\
+busy waiting, pturn, qturn, turn
+* Peterson
 ```
-    go build xxx.go
-    go run xxx.so xxx.txt
-    go doc
-    go fmt
-    go get
-    go test
+#pricess i
+enter_region(i)
+#critical section
+leave_region(i)
 ```
-# 2. currency
-## 2.1. goroutine
-not visible to OS by default
-* logical processor\
-    if only 1 logical processor -> goroutines run concurrently, no parallel\
-    but we can change num of logical processors so that they can map to goroutines
-* interleaving -> state not deterministic\
-    order of execution between concurrent task is not known
-* race conditions\
-    outcome depends on non-deterministic ordering
-* create goroutine
+### 2.8.2 Locks
+* Spinlock -> usually used on multi-core computer \
+-> reduce process switching cost (usually for short-term, fast critical region locking)
+* Semaphore -> P, V operation -> long_term locking as scheduling cost is big
 ```
-go foo()
-```
-* early exit
-if main thread finish -> goroutines will early exit.
-```
-func main(){
-    go printsth()
-    printsth() //maybe only this will be printed
+struc semaphore
+{
+    int count;
+    queueType queue;
 }
-```
-* synchronization\
-sync package
-    * wait groups\
-    sync.WaitGroup, contains a internal counter:
-    increment counter for each goroutine to wait for\
-    it go through if counter is 0.
-    ```
-    wg.Add(x) -> called on waiting thread.
-    wg.Done() -> called on waited goroutines
-    wg.wait() -> blocking call
-    ```
-## 2.2. channel
-Typed, c:=make(chan, int)
-```
-c <- 3
-x := <- c
-//an example
-func prod(v1 int, v2 int, c chan int){
-    c<- v1*v2
+
+P(s)
+{   s.count--;
+    if (s.count<0){ 
+        BLOCK process; 
+        insert into queue; 
+        re-schedule another process;
+    }
 }
-func main(){
-    c:=make (chan,int)
-    go prod(1,2,c)
-    go prod(2,3,c)
-    a:=<-c
-    b:=<-c
-    fmt.Printf(a*b)
-}
-```
-
-* Unbuffered channel\
-it cannot hold data -> "c<-3" will block until 3 is read by other thread with "x := <-c", and vice versa\
-can be directly used for synchronization (wait() & notify()), "c<-3" & "<-c".
-
-* buffered chan\
-sending will only block when buffer is full\
-receiving blocks when buffer is empty\
-use of buffer: sender(producer) & receiver (consumer) do not need to operate at same speed.
-```
-c:=make(chan int, 10)
-//iterate until sender called close(c)
-for i := range c{
-    fmt.Println(i)
-}
-```
-
-
-## 2.3. select
-
-```
-select {
-    case a = <-c1:
-        fmt.Println(a)
-    case b = <-c2:
-        fmt.Println(b)    
-}
-```
-Both Send and Receive can be selected
-```
-select {
-    case a = <-chanin:
-
-    case chanout <- b:
-        //if nobody is receiving on outchan it will block
-    default:
-        //xxx
-}
-```
-Abort can be used
-```
-for {
-    select{
-        case a <-c:
-
-        case <- abort:
-            return
+ 
+V(s)
+{   s.count++;
+    // if there are still process waiting
+    if (s.count<=0){
+        wake() one process from s.queue;
+        change its status to READY;
+        insert into READY queue;
     }
 }
 ```
+* Mutex\
+semaphore with count=1
 
-## 2.4. Mutual exclusion
-* mutex\
-sync.Mutex -> a binart semaphore
+* futex
+    * mix of user& kernel level lock
+    * avoid unnecessary trap into kernel
+
+* rwlock\
+shared-exclusive lock: suitable for read frequency much larger than write frequency cases.\
+It ensures that thread only read latest values -> if this is not required, than no need for read lock.
+    * if there is no write lock acquired -> any thread can apply read lock
+    * if there is a read lock acquired -> no thread can apply write lock
 ```
-m.Lock()
-task()
-m.unlock()
+/* 读模式下加锁  */
+int pthread_rwlock_rdlock (pthread_rwlock_t *__rwlock);
+ 
+/* 非阻塞的读模式下加锁  成功返回0，失败返回错误码*/
+int pthread_rwlock_tryrdlock (pthread_rwlock_t *__rwlock);
+ 
+# ifdef __USE_XOPEN2K
+/*  限时等待的读模式加锁 */
+int pthread_rwlock_timedrdlock (pthread_rwlock_t *__restrict __rwlock,
+                                       __const struct timespec *__restrict __abstime);
+# endif
+ 
+/* 写模式下加锁  */
+int pthread_rwlock_wrlock (pthread_rwlock_t *__rwlock);
+ 
+/* 非阻塞的写模式下加锁 */
+int pthread_rwlock_trywrlock (pthread_rwlock_t *__rwlock);
+ 
+# ifdef __USE_XOPEN2K
+/* 限时等待的写模式加锁 */
+int pthread_rwlock_timedwrlock (pthread_rwlock_t *__restrict __rwlock,
+                                       __const struct timespec *__restrict __abstime);
+# endif
+ 
+/* 解锁 */
+int pthread_rwlock_unlock (pthread_rwlock_t *__rwlock);
 ```
-
-* Once\
-sync.Once
+In java: 写锁可降级
 ```
-//func f will only execute once
-once.Do(f)
+rwl.writeLock().lock()
+rwl.readLock().lock()
+rwl.writeLock().unlock()
+//now write lock has been changed to read lock.
 ```
-And all call to Do() will block until the first Do() returns.\
-Ideal for one-time initialization.
+### 2.8.3 Monitor
+1. entering of monitor is mutual exclusion
+2. synchronization: can set condition -> have wait()/wake() operation
+3. consists of condition queue, 
+* HOARE\
+when var c= condition
+    * wait(c)
+    * signal(c)\
+    signal the first process in queue(c), and put current process into urgent queue \
+    -> after it done, switch back to current process
+* MESA
+    two times less of switching than HOARE
+    * signal(c)
+    * notify(c) -> need while loop, timer and broadcast
 
-* deadlock -> circular dependencies
+* implementation using semaphore
+    * TODO
 
-# 3. recommended workspace
-```
-    defined by GOPATH var
-    src
-    pkg
-    bin
-```
-# 4. variable
-```
-    dec: var x,y int
-    types: int, float, string
-    type dec: type temperature float64
-                type ID int
-    init: var x int = 100 OR var x = 100 OR x:=100 (only inside function)
-        uninit var has 0 or empty value.
+* __difference to semaphore__
+1. semaphore allows multiple threads to enter the region.
+2. monitor easier to use -> can lock on a certain condition like a shared object.
 
-    pointer: var x *int =&x OR new() returns a pointer -> x := new(int); *x=3
+### 2.8.4 Java wait() & notify()
+obj methods -> can only be used inside synchronized(obj){...}\
+wait(): release obj lock, wait for notify()\
+notify(): wake up a thread waiting for obj lock, and let it gets the lock\
+notifyall(): wake up all threads waiting for obj lock. -> threads will compete for the obj lock.
 
-    blocks: {} -> sequence of declaration and statements
+## 2.9 Memory & virtual memory
+* Overall model:
 
-    int: int8,int16,...int64, uint8,..., uint 64
+| Memory model |
+|---|
+| kernel space, 0xFFFF |
+| user space, 0x0000 |
 
-    float: float32, float64 -> 
+* User space model:
 
-    string: rune (code point is a Unicode character) -> x:="Hi There", each byte is a rune (UTF-8 code point)
-        unicode package: IsSpace(r rune), IsLetter(r rune), ToUpper(r rune)
-        string package: Compare(a,b), Contains(s,sub), HasPrefix(s,sub), Index(s,sub), Replace(s,old,new,n), TrimSpace(s)
-        Strconv package: Atoi(s), FormatFloat() -> float to str, ParseFloat() -> str to float
+| User Space |
+| --- |
+| stack, expand down <- SP |
+| empty space|
+| heap, expand upwards |
+| data, literals, const |
+| codes <-PC |
+
+* virtual address -> actual address
+    * the address a program have is logical
+    * need MMU to convert it into physical address
+
+* memory management methods
+    * 单一连续区 -> a process gets continuous address space
+    * 固定分区 -> 一个分区一个进程 -> waste & cannot support large process
+    * 可变分区 -> deal with fractions -> memory compaction
+    * 页式 page\
+    user process address space is divided into pages, 4k or 4M, index starts from 0.\
+    通过页表查询物理地址 \
+    Logical address:
+
+    | page number | offset (位移量，也是页内地址) | 
+    | --- | --- |
+
+    Memory mapping\
+    -> look up 页表
+    | page number | block number | 
+    | --- | --- |
+    -> obtain physical memory block address.
+
+    * 段式 \
+    [check link for more info](https://blog.csdn.net/wang379275614/article/details/13765599)
+    * 段页式
+
+* swapping -> processes switched between memory and disk space
+
+* virtual memory \
+Combination of memory and disk -> to get a very large "memory" \
+an abstraction of physical memory\
     
-    constants: 
-        1. const ( x=4
-            z="Hi")
-        2. iota 
-            type Grade int
-            const(
-                A Grade = iota //1
-                B               //2
-                C               //3
-            )
+    
+* 虚拟页式 paging\
+combination of virtual memory and page.
+1. not all pages are loaded when the process starts
+2. if memory is full, replace old page
+    * TLB -> consists of cache
+    * PAGE FAULT
+    缺页异常(有无空页框？)，违反权限，访问地址错误
+    * looking up process
+    check cache -> not hit -> MMU check page table -> 
+    [click](https://blog.csdn.net/cwl421/article/details/49678371)
+    
+    
+    * Replacement algorithms
+    1. Optimum page replacement algo -> just as a critiria.
+    2. FIFO -> implementation, page linked list
+    3. SCR (second chance) -> FIFO list, check bit R, if 0, replace; if 1, set to 0 and put to the end of list.
+    4. Clock -> circle design + pointer
+    5. NRU not recently used -> check R,M bit, R is clear every period of time
+    6. LRU least recently used -> close to OPT, but cost is large\
+    implementation: double linked list + hashtable
+    7. NFU not frequently used -> software counter
+    8. AGING -> 计数器在+R前右移一位，R加在左端
+    9. 工作集 -> 动态调整活跃页面的工作集
 
-    type conversion: 
-```
-# 5. Memory
-    heap and stack (mainly inside function)
-    compiler determines stack vs heap
-    garbage collection at background
+## 2.10 file system
 
-# 6. fmt
-    6.1 Printf: fmt.Printf("a"+ x)
-                fmt.Printf("a %s", x)
-    6.2 Scan: 
-        var x int;
-        num,err:= fmt.Scan(&x)
+## 2.11 Deadlocks & Classic problems
+* Conditions of deadlock
+    * mutual exclusion
+    * occupy & wait -> can release before waiting
+    * non-preemptive
+    * circular waiting ->资源的有序分配 - 编号
 
-# 7. flow control
-```
-    if cond { statement }
-    for init;term;update { statement } OR for term{ stmts } OR for { stmts }
-    SWITCH
-        Normal switch:
-        switch x { //auto break at end of each case
-            case 1:
-                stmts
-            case 2:
-                stmts}
-        Tagless switch: case contains a boolean and the first True is executed.
-        switch{
-            case x>1:
-            case x<-1:
-            default:}
-    BREAK & CONTINUE
-```
-# 8. Data structure
-## 8.1 Array
-        dec: var x [5]int; var x [5]int=[5]{1,2,3,4,5}; x:=[...]{1,2,3,4}; 
-        for loop: for i,v range x{ stmts}; 
-## 8.2 Slice: 
-variable size; ptr to the start; length is num of ele; capacity is max num of eles (start of slice to the end of arr);
-```
-    s1:=x[1:3]; s1:=[]int{1,2,3}; len(); cap()
-    access slice: change slice will change the underlying array and slices also refer to the same array.
-    append: x=append(x,1)
-```
-## 8.3 Hash Table & Maps
-        key/value pairs; len(x)
-        normal dec: var x map[string][int]; x=make(map[string][int]);
-        literal: x:= map[string][int] {"xxx":1 }
-        delete: delete(x,"xxx")
-        two-value: id,p=x["xxx"] -> p is presence of the key
-        for loop: for k,v := range x { stmts }
-## 8.4 Struct
-        type Person struct{
-            id int
-            name string
-        } p1,p2
-        dec: p3:=new(Person) OR p3:=Person(id:1,name="xxx")
-        p1.name="xxx"
-        make
-        slice: make([]int, 10); make([]int,10,20);
+## 2.12 Linux Commands
+* Performance tools
+    * top -u username\
+        press k -> enter pid to kill\
+        Virtual memory(virt)=Physical mem(res) + swap
+    * vmstat\
+    check system status:
+    mem, io,swap, cpu
+    * iostat\
+    check cpu & i/o status
+    * free -m, ds -ah\
+    check disk space
+    * lsof\
+    list of open files
+* Network
+    * tcpdump -i interface src/dst ip_addr
+        * -D check avail interfaces
+    * netstat 
+        * -a    all tcp udp connections
+        * -at/au    only tcp/udp
+        * -tp   pid
+* process
+    * ps -aux\
+    checka all processes
+    * jobs
+    * fg
+    * bg -> resume last suspanded bg work (Ctrl-z)
 
-# 9. Communication
-## 9.1 RFC request for comment
+<a name="db"></a>
+# 3. [ Database ](#toc)
+## 3.1 Transaction ACID 
+support of transaction -> innoDB?
+* Atomic
+* Consistency
+* Isolation
+    * read uncommitted -> dirty read
+    * read committed -> repeat select in a transaction may give different val
+    * repeatable read -> will snapshot of init select and save for future
+    * serializable -> performance loss 
+* Durability
 
-* protocol packages:\
-    "net/http": http.get(url)\
-    "net": TCP/IP and socket programming\
-            
-        net.Dial("tcp","url:80")
-* JSON: RFC 7159
+## 3.2 SQL
+### 3.2.1 Create & populate Tables
+* constraints
+    * PRIMARY KEY
+    * FOREIGN KEY, REFERENCES tablename(entry1,entry2)
+    * NOT NULL
+    * UNIQUE -> unique + not null = candidate key
+    * CHECK, CHECK (price > 0)
+* diff between view and a new sub-table
+    '''
+    CREATE VIEW singapore_customers1 AS
+    SELECT c.first_name, c.last_name
+    FROM customers c 
+    WHERE country='Singapore';
+    '''
+    * view updated with the original table
+    * a new table will not auto updated
+
+### 3.2.2 Logic
+* CASE 
+'''
+CASE 
+    WHEN
+    THEN
+    ELSE
+END
+'''
+* WHERE AND
+'''
+WHERE (X=Y AND Z=Y)
+AND (XXX BETWEEN 1 AND 10)
+'''
+* COALESCE(col2 , 0)
+```
+SELECT column1, column2, COALESCE(column2, 0) %if column2 is null, return 0
+FROM example
+WHERE column2 IS NULL;
+```
+### 3.3.3 quires
+* Aggregate query
+    * count()
+    '''
+    SELECT COUNT(DISTINCT c.customerid) 
+    FROM customers c;
+    '''
+    * MAX()
+    * AVG()
+    * GROUP BY
+    apply aggregate func on groups
     ```
-    attri-val pair -> struct or map
-    barr,err=json.Marshal(xx) return a byte[]
-    var p Person; err:= json.Unmarshal(barr,&p);
+    SELECT c.first_name, c.last_name, SUM(g.price)
+    FROM customers c, downloads d, games g
+    WHERE c.customerid = d.customerid
+    AND d.name = g.name AND d.version = g.version
+    GROUP BY c.customerid, c.first_name, c.last_name;
     ```
-* io/ioutil:
+    * SUM()
+    * EXTRACT()
     ```
-    dat,err:=ioutil.ReadFile("xxx.txt"); dat is []byte
-    err:= ioutil.WriteFile("xxx.txt", dat, 0777)
+    SELECT c.country, EXTRACT(YEAR FROM c.since ) AS regyear, COUNT(*) AS total
+    FROM customers c, downloads d
+    WHERE c.customerid = d.customerid
+    GROUP BY c.country, regyear
+    ORDER BY regyear, c.country;
     ```
-    * os:
+    * HAVING -> aggregate func not allowed in where
     ```
-    os.Create()
-    os.Open() -> f,err:=os.Open("xx.txt")
-    os.Close()
-    os.Read() read from file and read into []byte -> f.Read(barr) (make barr first)
-    os.Write()
+    SELECT c.country
+    FROM customers c
+    GROUP BY c.country
+    HAVING COUNT(*) >= 100;
     ```
+* nested queries
+    *  (NOT) IN, ANY, ALL(similar to max)
+    ```
+    SELECT d.name
+    FROM  downloads d
+    WHERE d.customerid = ANY (
+    SELECT c.customerid
+    FROM customers c
+    WHERE c.country = 'Singapore');
+        
+    SELECT g1.name, g1.version, g1.price
+    FROM  games g1
+    WHERE g1.price >= ALL (
+    SELECT g2.price
+    FROM  games g2);
+        
+    SELECT g1.name, g1.version, g1.price
+    FROM  games g1
+    WHERE g1.price >= ANY (
+    SELECT g2.price
+    FROM  games g2);
 
-# 10. function
-## 10.1 main(): 
-```
-func main(){fmt.Printf("...")}
-```
-## 10.2 init: 
-```
-func foo(x int) (int,int) {return x,x+1}
-```
-## 10.3 call by value/ reference: 
-        call by value: normal-> not affect outside variable
-        call by reference: pass a pointer -> will affect.
-            eg. func foo(y* int) { *y=*y+1}
-                foo(&x)
-            pass array:
-            eg2. func foo(arr *[3]int) int{ (*x)[0]=(*x)[0]+1 }
-                foo(&x)
-            pass slice:
-            eg3. func foo(sli int) int{sli[0]=sli[0]+1}
-                a:=[]int{1,2,3}
-                foo(a)
-## 10.4 function can be treated as other variables: 
-        eg. can be pass as args, can be created dynamically etc.
-        1. dec a var is function:
-            var funcvar func(int) int
-            func Intinc(x int) int{ return x+1}
-            funcvar=Intinc; funcvar(1)
-        2. pass as args
-            func apply(funcvar func(int) int,x int){return funcvar(x)}
-        3. anonymous func
-            v:=apply(func (x int) int {return x+1}, 2)
-        4. return a function
-            func makeeg(x,y int) func(int) int{
-                fn:=func (z,q int) int {
-                    return x+y+z+q
-                }
-                return fn
-            }
-        5. Closure
-            function + environment
-            when function is passed -> its environment goes with it
-            above eg, the x and y goes with fn.
-        6. variable args number
-            ...int means take any number of integer.
-            func getmax(vals ...int){
-                for _,v := range vals{
-                    ...
-                }
-            }
-        7. variadic slice argument
-            getmax(1,2,4,6)
-            vslice:=[]int{1,2,4,6}
-            getmax(vslice...)
-        8. defer func call
-        only call is defered.
-        func main(){
-            defer fmt.Println("xxx")
-        }
+    SELECT c1.country
+    FROM customers c1
+    GROUP BY c1.country
+    HAVING COUNT(*) >= ALL (
+    SELECT COUNT(*)
+    FROM customers c2
+    GROUP BY c2.country);
+    ```
+    * EXIST -> test if there is any result
+    ```
+    SELECT c.first_name, c.last_name
+    FROM customers c
+    WHERE NOT EXISTS( 
+    SELECT *   
+    FROM games g  
+    WHERE g.name ='Aerified'  
+    AND NOT EXISTS (      
+    SELECT *      
+    FROM downloads d     
+    WHERE d.customerid = c.customerid     
+    AND d.name = g.name      
+    AND d.version = g.version));
+    ```
+    * UNION, INTERSECT, EXCEPT
 
-# 11. Class
-    not conventional object-oriented
-## 11.1 Associating Methods
-1. with data
-```
-type myint int
-func (m myint) foo(int) int{}
-v.foo()
-```
-2. with struct
-```
-type Point struct{
-    x int
-    y int
-} 
-```
-3. encapsulation
-```
-package data
-type Point struct{x,y int}
-func (p Point) init(x,y int){}
-func (p Point) Double(v float64){...}
-...
-package main
-var p data.Point
-p.init()
-...
-```
-## 11.2 Receiver, referencing & dereferencing
-```
-func (p *Point) Modify(x int){
-    p.x=p.x+x
-}
-now this function is able to change p as p is passed by reference.
-And there is no need to deference nor reference, like *(p).x.
-p:=Point(3,4)
-p.Modify(1) -> no need to reference
-```
-## 11.3 OOP Features
-1. Polymorphism\
-    -> override function with same signature
 
-2. Interface\
-signature of the methods
-```
-type Shape interface{
-    Area() float64
-    Perimeter() float64
-}
-# no explicit indication needed
-type Triangle {}
-func (T Triangle) Area() float64 {...}
-func (T Triangke) Perimeter() float64 {...}
-```
-empty interface: interface{}
-```
-func Printme(var interface{}){
-    fmt.Println(var)
-}
-```
-3. concrete types and interface
-```
-func (d *Dog) Speak(){
-    if d==nil {
-        fmt.Println("noise ")
-    }else{
-        fmt.Println(d.name)
-    }
-}
-var s1 Animal
-var d1 Dog{"Bob"}
-s1=d1
-s1.Speak()
----nil dynamic value with valid dynamic type is allowed---
-var s1 Animal
-var d1 *Dog
-s1=d1
-s1.Speak()
----nil dynamic type nor value-> cannot call the method---
-var s1 Animal
-s1.Speak() -> error
-``` 
-4. type assertions
 
-type assertions
-```
-func xxx() bool{
-rect,ok:=s.(Rectangle)
-if ok{
-    do something
-}
-Tri,ok:=s.(Triangle)
-if ok {
-    do something
-}}
-```
-type switch
-```
-switch :=sh:=s.(type){
-    case Rectangle:
-        ...
-    case Triangle:
-        ...
-}
-```
-5. error interfance
-```
-type error() interface{
-    Error() string
-}
-```
-if operation correct: err==nil
+## 3.3 NoSQL DB
+* redis
+* MangoDB
 
-eg. 
+## 3.4 Inbexes
+* B Tree
+
+* B+ Tree
+
+* Index scan & Bitmap hash scan & Sequencial Scan
+
+<a name="languages"></a>
+# 4. [ Languages ](#toc)
+## 4.0 OOP
+characters:
+* Abstraction -> interfaces
+* Encapsulation -> hide details or variables
+* Inheritance -> inherit methods and variables
+* Polymorphism\
+Eg.
 ```
-f,err:=os.Open("xxx")
-if err!=nil {
-    ...
-}
+Animal a= Dog()
+Animal b= Cat()
+a.say()
+b.say() 
 ```
+## 4.1 java
+
+## 4.2 python
+### multi-threading
+as GIL exists, python threads can only progress concurrently, not parallel\
+therefore it does not provide additional computing power\
+-> I/O intense tasks are prefered.
+### OOP
+type()\
+dir(obj) -> show all the methods including magic functions
+### shortcut functions
+count = collections.Count(some_list) -> return a dict with frequency as value.
+dict.get(x,0) -> if x not exist, return 0, can be 1 less "if else"
+## 4.3 Golang
+
+## 4.4 shell scripting
+### 4.4.1 shell
+
+### 4.4.2 sed
+
+### 4.4.3 awk
+
+## 4.5 deep copy & shallow copy
+
+<a name="docker"></a>
+# 5. [ Docker & VM ](#toc)
+## 5.1 comparasion
+* docker is lightweight as it built on the OS kernel & they share its libs
+* VM OS level isolations & docker is process level iso
+* docker: same OS kernel, VM is different kernel.
+
+<a name="data_structure"></a>
+# 6. [ Data Structure ](#toc)
+## 6.1 Sorting
+* insertion sort/ selection sort O(n^2)
+* BubbleSort
+* Mergesort
+* quick sort -> O(n^2)
+* counting sort -> O(n)
+* topological sort
+
+## 6.2 Searching
+* linear search -> O(n)
+* Binary search -> O(log(n))\
+However it requires sorted list
+* BFS
+* DFS
+
+## 6.3 Data structs
+* Tree
+    * binary tree
+    * binary search tree (BST)
+    * heap -> can be used to implement priority queue
+    * tranversal order:
+        1. in-order
+        2. pre-order
+        3. post-order
+
+* linked list
+    * normal linked list
+    * double linked list
+
+* Queue
+
+* Stack
+
+* hashtable/ dictionary
+    * O(1) get
+    * O(1) put
+
+* array
+
+
+<a name="experience"></a>
+# 7. [ Experience ](#toc)
+## 1. C# & C++ dev
+* liveness detection
+* edit the C++ code and load it as a .dll file into C# wrapper
+* multi-threading -> worker thread sends request
+* C# web clients & restful API
+* captured image converted to Base64
+
+difficulties:
+1. get used to visual c++ & c#
+2. first time using REST api
+
+## 2. Python Kafka dev
+* set up kafka message queues
+* accept messages and process -> put into a message queue
+* otherside, use multi-threading to reading from same topic -> consume message and send it using api
+* get result and append to Redis
+* Goal: solve concurrency problem as accept messages faster than the api processing the request. accept message speed 5/s, api 1/s -> open 5 threads.
+
+## 3. Web app development
+* make use of HTML, CSS, PHP, JS, mysqli
+* select slots and submit, can view my booking etc.
+* make use of session of information 
+
+Problem
+1. should implement transaction
+
+## 4. Distributed Maze Game
+* Using Java RMI& socket to implement the game
+* Java RMI as a boostraping point -> tracker of current gamers
+* Random game players promoted as logical primary& backup server
+* Fault tolerance, able to perform normally if players/server crash.\
+backup promoted to primary if prim fails
+* multi-threading model -> one dispatcher thread -> one request, one thread
+* backend pinging for certain number of servers -> if dead -> contact servers
+* currency handling -> synchronized on server & avoid open multiple sockets to same server at a time.
+
+Problem -> need more precautions
+1. server should not accept request if another server is online
+2. need more sequencing between prim & backup -> sync request needs sequence number to keep linearizability\
+
+Difficulties: 
+1. debugging
+2. more than 1 threads using a socket at two code blocks at the same time -> lockings
+
+## 5. Primary-backup KV Store, Asyn
+* event-driven model & unreliable link
+* set timers for retransmission
+* implement a view server to respond to servers ping requests & return view
+* using view_number to prevent split brain problem -> needs ack with current view number from prim then can proceed to next view
+* Replicated state machine -> prim only sends commands to backup
+* cache all requests received while getting promoted
+* fault tolerance
+
+Difficulties:
+1. replicated commands into server -> server shim -> (At Most Once semantic)
+2. track every requests from each client -> seq number = uuid+ seq
+3. how to make prim & backup linearizable -> seq number in the KV store -> order the sync commands to backup.
+
+## 6. Multi-Paxos KV Store, Asyn
+* using Paxos to implement a replicated state machine
+* servers agree on a command for a certain slot
+* phase 1: prepare; phase 2: accept; phase 3: commit
+* leader election -> reduce conflicts
+* eliminate phase 1 -> nomoreaccepted returned -> if reach majority -> skip phase 1
+
+Problem: 
+1. deadlock
+2. log compaction & garbage collection
+3. cannot deal with configuration change
+
+## 7. Microsoft Access development
+* ER-diagram
+* implementation
+
+## 8. Django
+* ToDo app -> add task via form, and able to delete and modify
+* reconstruct ## 3 project using django as backend -> for modern development
+* transaction supported
+
+## 9. Attire Checking system
+* integrate with sensors and gentry with motors
+* data collection, processing
+* objection recognition with pretrained model
+* application to run inference and open/close gentry.
+
+## 10. Java -> Spring boot
+
+## 11. Java -> SSM Spring, spring mvc, MyBatis
