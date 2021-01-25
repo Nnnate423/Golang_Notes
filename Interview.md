@@ -603,6 +603,13 @@ WHERE column2 IS NULL;
 * redis
 * MangoDB
 
+## 3.4 Inbexes
+* B Tree
+
+* B+ Tree
+
+* Index scan & Bitmap hash scan & Sequencial Scan
+
 <a name="languages"></a>
 # 4. [ Languages ](#toc)
 ## 4.0 OOP
@@ -690,6 +697,7 @@ However it requires sorted list
 
 * array
 
+
 <a name="experience"></a>
 # 7. [ Experience ](#toc)
 ## 1. C# & C++ dev
@@ -776,3 +784,7 @@ Problem:
 * data collection, processing
 * objection recognition with pretrained model
 * application to run inference and open/close gentry.
+
+## 10. Java -> Spring boot
+
+## 11. Java -> SSM Spring, spring mvc, MyBatis
