@@ -597,6 +597,62 @@ WHERE column2 IS NULL;
     ```
     * UNION, INTERSECT, EXCEPT
 
+* slow queries -> use of NOT EXIST\
+    especially double negation
+
+* EXPLAIN, EXPLAIN ANALYSIS\
+    Here you can check execution plans 
+
+* JOIN\
+    there are sql joins
+    * inner join
+    * cross join
+    * full (outer) join
+    * left join
+    * right join
+
+    and there are joins in execution plan:
+    * hash joins -> hash is how they computed
+    * hash semi joins 
+    * hash anti joins
+    ```
+    R1 join R2 on a condition theta returns the rows of the cross product R1 x R2 that agree with theta.
+    R1 semi-join R2 on a condition theta returns the rows of R1 that agree with theta in the cross product R1 x R2.
+    R1 semi-join R2 on a condition theta returns the rows of R1 that do not agree with theta in the cross product R1 x R2.
+
+        R1(A, B) = {(a, 1), (a, 2), (b, 1), (c, 3)}, 
+        R2(C, D) = {(1, d), (2, d), (4, d)}
+        then
+
+        R1 x R2 = {
+        (a, 1, 1, d), (a, 1, 2, d), (a, 1, 4, d),
+        (a, 2, 1, d), (a, 2, 2, d), (a, 2, 4, d),
+        (b, 1, 1, d), (b, 1, 2, d), (b, 1, 4, d),
+        (c, 3, 1, d), (c, 3, 2, d), (c, 3, 4, d)}
+
+        R1 join R2 on R1.B = R2.C = {
+        (a, 1, 1, d),
+        (a, 2, 2, d),
+        (b, 1, 1, d)}
+
+        R1 semi-join R2 on R1.B = R2.C = {
+        (a, 1),
+        (a, 2),
+        (b, 1)}
+
+        R1 anti_join R2 on R1.B = R2.C = {(c, 3)}
+
+    ```
+    * nested loop join\
+        algo with nested loops to join data -> inside execute plan, not sql
+        ```
+        for  i in tb1:
+            for j in tb2:
+                check conditions: 
+                    add to new tb
+        ```
+    
+
 
 
 ## 3.3 NoSQL DB
@@ -609,6 +665,7 @@ WHERE column2 IS NULL;
 * B+ Tree
 
 * Index scan & Bitmap hash scan & Sequencial Scan
+
 
 <a name="languages"></a>
 # 4. [ Languages ](#toc)
