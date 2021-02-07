@@ -35,18 +35,47 @@ function 1 input param and 1 ouput param.
     ```
     can be used in stream map() as it can return some new objects.
 * Lambda
-    * implement interface methods
-    ```
-    public interface
-    ```
+    * implement interface methods (only 1 method missing implementation)
+        ```
+        public interface Runner{
+            public void goRun(int time);
+        }
+        Runner runner = (time) ->{System.out.println("Runner run for: "+ time+ " seconds.");};
+        runner.goRun(3);
+        ```
+        It is different to anonymous interface implementations(more code, more powerful), but similiar.
     * with multiple param
-
-    * Method references as lambda
-
+        it can also return value
+        ```
+        (p1,p2)->{return p1>p2;}
+        //equals to the expression:
+        (p1,p2)->p1>p2;
+        ```
+    * Method references
+        * Static method reference\
+        easy, use TheClass::StaticMethod
+        * Parameter method reference\
+        have to make sure parameter and return types match (same signiture).
+        * Instance method reference
+            ```
+            ClassA instance = new ClassA();
+            InterfaceB inter = ClassA::instanceMethod;
+            ```
+        * Constructor methods reference
+            ```
+            public interface Factory {
+                public String create(char[] val);
+            }
+            Factory fac = String::new;
+            ```
 
 ### 0.2 Stream
 
 ### 0.3 Iterable
+
+### 0.4 Access Modifier
+
+### 0.5 Collections
 
 ## 1. Spring
 ### 1.1 annotation & basics

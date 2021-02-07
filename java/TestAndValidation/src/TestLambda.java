@@ -1,7 +1,6 @@
 
 import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -10,9 +9,6 @@ import java.util.function.DoubleSupplier;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-
-import static java.util.Random.*;
-import static org.junit.Assert.assertEquals;
 
 public class TestLambda {
 
@@ -43,4 +39,14 @@ public class TestLambda {
         strs.stream().map(samplefunc).collect(Collectors.toList());
     }
 
+    @Test
+    public void TestLambda(){
+        Runner runner = (time) ->{System.out.println("Runner run for: "+ time+ " seconds.");};
+        runner.goRun(3);
+    }
+
+}
+
+interface Runner{
+    public void goRun(int time);
 }
