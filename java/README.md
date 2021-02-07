@@ -70,12 +70,59 @@ function 1 input param and 1 ouput param.
             ```
 
 ### 0.2 Stream
+It can be used on any type of Collection( List, Set etc.)\
+* Init a stream
+    * Stream.of
+
+    * Stream builder
+
+    * stream.iterator
+
+    * from collection
+
+* pipeline
+    * skip & limit
+
+    * map
+
+    * filter
+
+    * collect
+
+    * count
+
+    * reduce
+
 
 ### 0.3 Iterable
+An interface:
+    
+    public interface Iterable<T> {
+        Iterator<T> iterator();
+        Spliterator<T> spliterator();
+        void forEach(Consumer<? super T> action); //loop over the iterable and call the consumer func on it.
+    }
+
+* spliterator (in both iterable and stream)\
+    mainly used to split source data and process source data.\
+    common methods: TryAdvance(Consumer action), trySplit(), ForEachRemaining(Consumer action), estimateSize().
+
 
 ### 0.4 Access Modifier
+| | public | protected | default | private |
+| --- | --- | --- | --- | --- |
+|same class| Y | Y | Y | Y |
+|same package subclass| Y | Y | Y | N |
+|same package non-subclass|Y | Y | Y | N |
+|diff package subclass| Y | Y | N | N |
+|diff package non-subclass| Y | N | N | N |
+
+<br>
 
 ### 0.5 Collections
+* String
+
+
 
 ## 1. Spring
 ### 1.1 annotation & basics
