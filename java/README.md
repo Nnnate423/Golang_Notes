@@ -73,25 +73,65 @@ function 1 input param and 1 ouput param.
 It can be used on any type of Collection( List, Set etc.)\
 * Init a stream
     * Stream.of
-
+    ```
+    Stream<Integer> stream = Stream.of(1,2,3);
+    ```
     * Stream builder
-
+    ```
+    Stream<String> streamBuilder =
+        Stream.<String>builder().add("a").add("b").add("c").build();
+    ```
     * stream.iterator
-
-    * from collection
+    ```
+    Stream<Integer> streamIterated = Stream.iterate(0, n -> n + 2).limit(10);
+    ```
+    * from collection\
+    eg. define a list and call .stream() method.
 
 * pipeline
-    * skip & limit
+    * skip(int num) & limit(int num) & findFirst()
+    * range(int i1, int i2) - used on primitives
+        ```
+        IntStream intStream = IntStream.range(1, 3);
+        ```
+    * map(lambda) takes a lambda function\
+        map one object to another and return it, like a lookup operation.
 
-    * map
-
-    * filter
-
+    * filter(lambda) takes a lambda func\
+        return a bool based on some test.
+        ```
+        Optional<String> stream = list.stream().filter(element -> {
+            log.info("filter() was called");
+            return element.contains("2");
+        }).map(element -> {
+            log.info("map() was called");
+            return element.toUpperCase();
+        }).findFirst();
+        ```
     * collect
+        collect the processed stream into data structure (Collection)
+        ```
+        List<String> collectorCollection = productList.stream().map(Product::getName).collect(Collectors.toList());
+        ```
 
     * count
-
-    * reduce
+        count size, used at end
+        ```
+        long size = list.stream().skip(2).map(element -> {
+            wasCalled();
+            return element.substring(0, 3);
+        }).count();
+        ```
+    * reduce\
+    act as accumulator
+    ```
+    List<Integer> numbers = Arrays.asList(1, 2, 3, 4, 5, 6);
+    int result = numbers
+        .stream()
+        .reduce(0, (subtotal, element) -> subtotal + element);
+    //equavalent to
+    int result = numbers.stream().reduce(0, Integer::sum);
+    ```
 
 
 ### 0.3 Iterable
