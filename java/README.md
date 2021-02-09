@@ -190,6 +190,22 @@ An interface:
 * Spring Web dependency
     it brings spring MVC and embeded tomcat.
 
+* @SessionAttributes("xx"), @ModelAttribute(name = "xx")
+    ```
+    @Controller
+    @SessionAttributes("visitor")
+    @RequestMapping("/trades")
+    public class TradeController {
+
+        @ModelAttribute("visitor")
+        public Visitor getVisitor (....) {
+            return new Visitor(....);
+        }
+    ....
+    }
+    ```
+    In above code, when a request comes in, the first thing Spring will do is to notice @SessionAttributes('visitor') and then attempt to find the value of 'visitor' in javax.servlet.http.HttpSession.\
+    If it doesn't find the value, then the method with @ModelAttribute having the same name 'visitor' (method getVisitor()) will be invoked. The returned value from such method will be used to populate the session with name 'visitor'.
 
 
 ### 1.2. JDBC
