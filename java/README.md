@@ -162,12 +162,62 @@ An interface:
 ### 0.5 Collections
 * String
 
+### 0.6 Optional
+Essentially a wrapper of class allowing it to be null.
 
+    Optional<T> x = Optional.of(...)
+    Optional<String> empty = Optional.empty() 
+
+* .empty(); .of(); .ofNullable()\
+    Ways to init an optional var. \
+        .empty() //init it with null value\
+        .of() //init it with type T (null <b>not allowed</b>).\
+        .ofNullable() //init it with nullable value.
+
+* isPresent(); isEmpty(); ifPresent()\
+    ways to check existance
+        
+        x.ifPresent(name -> System.out.println(name));
+
+    ifPresent() can take a Consumer method.
+
+* orElse(); orElseGet(); orElseThrow()\
+    if not found, do some default action/ return some defaults.
+    * Signature
+        ```
+        public T orElse(T other) \\ it takes ant type
+        public T orElseGet(Supplier<? extends T> other) \\ it only takes supplier
+        ```
+    * Handling default <b>value</b>
+        ```
+        String name = Optional.ofNullable(nullName).orElse("john");
+        String name = Optional.ofNullable(nullName).orElseGet(() -> "john");
+        ```
+    * difference
+        ```
+        String name = Optional.of("baeldung").orElse(getRandomName());
+        //this getRandomName will still be called.
+        ```
+        the parameter of orElse() is evaluated even when having a non-empty Optional.\
+        but orElseGet() will not.
+
+* filter(); map(); get()\
+    get(): if there no element(null) in wrapper, get() will return NoSuchElementException.
+    map() and filter() are same as stream. 
+    
 
 ## 1. Spring
+* Simplicity
+* Testability
+* loosely coupled -> 1. run time polymorphism 2. Dependency injection.\ DI (through setter or constructor) is a way of implementing IOC.
+* Bean-> object inited,assembled, managed by IOC container(created with metadata config).
+* config metadata: 1. XML based 2. Annotation based 3. java based.
 ### 1.1 annotation & basics
 * @SpringBootApplication
     @SpringBootApplication = @SpringBootConfiguration + @EnableAutoConfiguration + @ComponentScan
+* two types of IOC containers:
+    * BeanFactory - lazyinit, getBean will create bean. 
+    * ApplicationContext - aggresiveinit, without getBean, all beans will be inited at start.
 * @WebMvcTest
     for mock spring mvc test, create mockMvc and do rest calls to controller.
 * @Automired
