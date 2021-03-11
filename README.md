@@ -189,7 +189,18 @@ implemented in kernel and listed on sys_call_table.
     syscall -> context switch (into kernel) -> look up sys_call_table -> call kernel function -> return, context switch (into user space) -> end
 ## 2.5.1 Module
 按需载入的，动态加载卸载的模块（代码块）。 
-
+* How to write one
+    1. implement __init, __exit\
+        import init.h, kernel.h, module.h\
+        bind these two functions with module_init(), module_exit()
+    2. Makefile
+        obj-m += xxx.o
+        make -C /lib/modules/$(shell uname -r)/build M=$(PWD) modules
+    3. make, insmod. rmmod
+* Relation with driver & devices
+    1. driver can be either build-in into kernel or a module(can be installed at runtime)
+    2. driver associate OS with hardwares.
+    3. devices can be character device(tty), block device (disk) etc.
 ## 2.6 Process & thread
 * Process
     * __Process control block__ (PCB) - task_struct in linuc
