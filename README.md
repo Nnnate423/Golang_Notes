@@ -163,7 +163,32 @@ System software, collection of system modules.
     program states recovered from stacks and continue
 
 ## 2.5 System call
+Some kernel functions that are exposed to user space in certain way.\
+implemented in kernel and listed on sys_call_table.
+* how to add new syscall
+    1. SYSCALL_DEFINE\[x](vars)\
+        use this to implement the syscall function
+    2. provide Makefile\
+        obj+=...\
+        then add this new syscall folder to kernel Makefile core (core-y).
+    3. Add to sys_call_table and header (arch/x86/entry/syscalls/syscall_64.tbl); (include/linux/syscalls.h)
+        in header, add like:\
+        ```
+        asmlinkage long sys_xxx();
+        ```
+    4. recompile the kernel use Makefile (check using "make menuconfig").
 
+* What happened when use syscall
+    1. how to call
+    ```
+    #include <linux/unistd.h>
+    int printmsg(int i){
+    return syscall(your_syscall_number, i); } 
+    ```
+    2. how it works
+    syscall -> context switch (into kernel) -> look up sys_call_table -> call kernel function -> return, context switch (into user space) -> end
+## 2.5.1 Module
+按需载入的，动态加载卸载的模块（代码块）。 
 
 ## 2.6 Process & thread
 * Process
