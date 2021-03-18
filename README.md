@@ -112,6 +112,19 @@
 * how it works \
 brower URL -> look up in local DNS -> if not found -> look up level DNS -> return IP -> establish TCP/IP connection -> send HTTP request to the server
 
+## 1.4 RESTful API
+* compare with SOAP\
+    soap = RPC + HTTP + XML, parsing xml makes it slower than REST.\
+    SOAP is harder to use, not as clear as REST.\
+    SOAP has better security feature, it supports SSL & others.
+* Methods
+    * GET
+    * DELETE
+    * PUT -> indempotency (update) \
+        -> making multiple identical requests has the same effect as making a single request
+    * POST -> not indempotency
+    * HEAD -> GET with no response body.
+
 
 <a name="OS"></a>
 # 2. [ Operating System ](#toc)
