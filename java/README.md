@@ -1,5 +1,19 @@
 # Java Notes
 ## 0. Native Java
+### 0.0 Intellij project steps
+1. Add framework support -> maven
+2. Intellij preference -> java compiler -> choose verson like 8
+3. Open module setting
+    * Project -> check SDK, language level, output folder
+    * Modules
+        * language level -> version consistency
+        * mark source, test, target package
+        * path: check output path
+    * Platform setting -> JDK home path
+4. make sure every version of java is consistent
+5. add depedencies to maven
+6. invalidate cache & restart project
+
 ### 0.1. Lambda & Consumer, Supplier Interface
 consumer only 1 input, no return;\
 supplier 1 return, no input;\
