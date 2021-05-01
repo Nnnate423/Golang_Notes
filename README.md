@@ -219,6 +219,13 @@ implemented in kernel and listed on sys_call_table.
     * __Process control block__ (PCB) - task_struct in linuc
         * includes PID, name, userID, relations, states, priority, code entry, queue pointer, virtual memory space, \
         file lists, CPU information like PSW,PC, stack pointer & pages pointers
+        ![ task_struct ](resource/task_struct.png)
+    * process hierachy
+        1. each proc has exactly one parent except init proc.
+        2. if parent die, the proc will be adopted by init.
+        3. parent 
+            * real parent: the current parent of the proc
+            * parent: the proc that will handle the termination signal of the child.
     * unit of resource allocation:
         * memory space
         * files
@@ -230,6 +237,14 @@ implemented in kernel and listed on sys_call_table.
         * suspended
         * new & terminated
     * creation of process
+        * techniques
+            1. Copy-on-Write \
+            * Parent and the child process initially share same physical pages\
+            * Linux terminology: physical pages are called page frames or just frames; “pages” refers to virtual pages.\
+            * As long as they are shared, they cannot be modified, Any attempt to write a shared frame triggers an exception, Kernel duplicates the page into a new page frame and marks it as writable.\
+            * Original page frame remains write-protected: kernel checks whether the writing process is the only owner of the page frame. If so, makes the page frame writable for the process
+            2. clone()
+            3. vfork()
         * fock() in linux 
         ```
         pid=fork()
@@ -237,10 +252,11 @@ implemented in kernel and listed on sys_call_table.
         if (pid==0){//new process}
         else {//old process}
         ```
-       1. Allocate PID,PCB
-       2. allocation location/space
-       3. ini PCB (state=new)
-       4. set queue pointer -> start queueing 
+        * procedure
+            1. Allocate PID,PCB
+            2. allocation location/space
+            3. ini PCB (state=new)
+            4. set queue pointer -> start queueing 
 * Thread
     * unit of scheduling
     * System level -> windows

@@ -26,7 +26,86 @@
         - value = WebApplicationContext.SCOPE_SESSION, ProxyMode = ScopedProxyMode.INTERFACES
             - see page 86, 3.4.1
             - a proxy is injected instead of a bean -> it will decide which bean is injected during runtime.
-            
+* init properities of bean
+    - Normal way 
+        - hard code in @Bean
+        - hard code in XML
+    - inject value using file
+        - @PropertySource("properities file")
+        - use Environment to load properities file
+        - env.getProperty("prop name", default_value)
+    - property placeholder
+        - ${ ... }
+    - SpEL
+        - access values: #{ ... } pass in value-> @Value("#{systemProperties['something']}") String value
+        - use classes: T(java.lang.Math) -> able to use the static methods/ vars.
+        - allow multiple operators: #{S.score>100 ? "Winner" : "Loser"}
+        - regular expression: #{admian.email matches '[a-z._%+-]+@[..]'}
+        - use Collections: #{S.songs[random number]}
+        - look up: .?[cond], .^[] first match, .$[] last match
+            - eg. #{S.songs.?[art eq 'new era']}
+## 4. AOP
+designed for cross-cutting concerns like security, transaction.\
+inheritance and delegation have their flaws: 
+1. inheritance increase coupling and results in a fragile inheritance relations.
+2. delegation increase complexity
 
+For AOP, aspect is a special class -> can be declared without changing the class which needs this feature.
+* Concepts
+    * Advice
+        - describe the work of AOP
+        - set the time to run AOP service
+            - Before, After, After-returning, After-throwing, Around
+    * Join Point 连接点
+        - 应用执行过程中，插入切面的一个点
+    * Pointcut
+        - 匹配一个或多个连接点 (where to use the aspect) -> use regex
+    * Aspect
+        - integration of Advice and Pointcut
+    * Introduction 引入
+        - add new methods & attributes to the existing class.
+    * Weaving
+        - 把切面应用到目标对象并创建新的代理的过程 \
+        -> during runtime: AOP container will create a dynamic proxy for a instance.
+* Types of AOP support
+    1. proxy based classic Spring AOP -> do not use
+    2. POJO aspects -> Spring AOP join point only apply to methods, while AspectJ support 字段/构造器\
+    Spring AOP is based on proxy, it wraps the target object -> accept request for it, run aspect logic before its methods invocation.
+    3. @AspectJ Annotation-driven
+    4. 注入式@AspectJ切面
 
-## 4.
+* Select Join point throuth Pointcut
+    1. write pointcut
+    execution: 匹配连接点的执行方法
+    others: 限制匹配
+    ```
+    execution(* somepackage.Randomcls.do(..) and bean('beanid'))
+    execution(* somepackage.Randomcls.do(..) && within(somepackage))
+    ```
+
+    2. Define Aspect with pointcut
+    ```
+    @Aspect
+    public class XXX{
+        //define pointcut for later convenient use
+        @Pointcut("execution(.. pkg.Sclass.method(..))")
+        public void point(){}
+
+        //use point cut
+        @Before("point()")
+        public void beforelog(){System.out.println("sss")}
+
+        @After("point()")
+        public void afterlog(){System.out.println("sss")}
+    }
+    ```
+    in configuration file
+    ```
+    @Configuration
+    @EnableAspectJAutoProxy     //start aspectj proxy
+    public class XXXConfig{
+        @Bean                //declare bean
+        public XXX xxx(){return new XXX();}
+    }
+    ```
+
