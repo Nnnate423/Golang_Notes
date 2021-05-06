@@ -238,10 +238,10 @@ implemented in kernel and listed on sys_call_table.
         * new & terminated
     * creation of process
         * techniques
-            1. Copy-on-Write \
-            * Parent and the child process initially share same physical pages\
-            * Linux terminology: physical pages are called page frames or just frames; “pages” refers to virtual pages.\
-            * As long as they are shared, they cannot be modified, Any attempt to write a shared frame triggers an exception, Kernel duplicates the page into a new page frame and marks it as writable.\
+            1. Copy-on-Write 
+            * Parent and the child process initially share same physical pages
+            * Linux terminology: physical pages are called page frames or just frames; “pages” refers to virtual pages.
+            * As long as they are shared, they cannot be modified, Any attempt to write a shared frame triggers an exception, Kernel duplicates the page into a new page frame and marks it as writable.
             * Original page frame remains write-protected: kernel checks whether the writing process is the only owner of the page frame. If so, makes the page frame writable for the process
             2. clone()
             3. vfork()
@@ -257,6 +257,13 @@ implemented in kernel and listed on sys_call_table.
             2. allocation location/space
             3. ini PCB (state=new)
             4. set queue pointer -> start queueing 
+    * switching
+        * Done in Linux schedule() function 
+        * Switch the Page Global Directory(which points to PML4E) to install a new address space
+        * Switch the Kernel Mode stack and the hardware context using the switch_to macro
+        * Two task may have same cr3 if they belong to same task
+        * Different cr3 val points to diff page global dir -> which translate to different physical addr
+
 * Thread
     * unit of scheduling
     * System level -> windows
@@ -300,7 +307,35 @@ implemented in kernel and listed on sys_call_table.
     1. visible to users
     2. control & states: PC, PSW (program status word, indicate kernal/ user mode), Stack ptr
 * scheduling
-    TODO
+    1. criteria
+        * min response time
+        * max throughput
+        * fairness
+    2. algorithms
+        * FCFS
+        * RR -> each proc get a small unit of CPU time
+        * Shortest job first(SJF) 
+            - best to optimize avg response time
+        * Shortest remaining time first(SRTF) 
+            - best to optimize avg response time
+            - preemptive version of SJF
+            - cons: 1. starvation 2. hard to predict future
+        * Priority scheduling 
+            - niceness in linux, from -20 to 19, most favored to least favored
+            - priority inversion, low p proc gets a lock, high p preemot and try get it but blocked. now mid p proc runs and it is the highest p ready process, then it will starve the high p process. -> solution: priority inheritance.
+        * multi-level feedback queue -> cpu-bound task drops to low level
+        * Completelu fair scheduling CFS
+            - based on RBT, indexed by virtual running time.
+            - Time slice for a task = period * (weight of task) / (total weight of runqueue)
+            - vruntime += (time process ran) * (load weight niceness 0 ) / (load weight of this process)
+             - therefore, vruntime increment for each process that run out time slice is the same.
+        * brain fuck scheduler
+            - designed for linux desktop.
+            - skip list
+
+
+
+
 ## 2.8 Synchronization
 ### 2.8.1 Mutual exclusion
 competing for critical resource (critical section)
@@ -466,34 +501,122 @@ notifyall(): wake up all threads waiting for obj lock. -> threads will compete f
 
 * virtual memory \
 Combination of memory and disk -> to get a very large "memory" \
-an abstraction of physical memory\
+an abstraction of physical memory
     
     
 * 虚拟页式 paging\
 combination of virtual memory and page.
-1. not all pages are loaded when the process starts
-2. if memory is full, replace old page
-    * TLB -> consists of cache
-    * PAGE FAULT
-    缺页异常(有无空页框？)，违反权限，访问地址错误
-    * looking up process
-    check cache -> not hit -> MMU check page table -> 
-    [click](https://blog.csdn.net/cwl421/article/details/49678371)
-    
-    
-    * Replacement algorithms
-    1. Optimum page replacement algo -> just as a critiria.
-    2. FIFO -> implementation, page linked list
-    3. SCR (second chance) -> FIFO list, check bit R, if 0, replace; if 1, set to 0 and put to the end of list.
-    4. Clock -> circle design + pointer
-    5. NRU not recently used -> check R,M bit, R is clear every period of time
-    6. LRU least recently used -> close to OPT, but cost is large\
-    implementation: double linked list + hashtable
-    7. NFU not frequently used -> software counter
-    8. AGING -> 计数器在+R前右移一位，R加在左端
-    9. 工作集 -> 动态调整活跃页面的工作集
+    1. not all pages are loaded when the process starts
+    2. if memory is full, replace old page
+        * TLB -> consists of cache
+        * PAGE FAULT
+        缺页异常(有无空页框？)，违反权限，访问地址错误
+        * <b>looking up process</b>
+        ![proc](resource/addr_trans_process.png)
+        check TLB -> if no hit -> MMU translate -> check cache -> if no hit -> load from main memory.\
+        therefore, TLB is to reduce translation times, cache is to reduce times to read from memory.
+        
+        * Replacement algorithms
+            1. Optimum page replacement algo -> just as a critiria.
+            2. FIFO -> implementation, page linked list
+            3. SCR (second chance) -> FIFO list, check bit R, if 0, replace; if 1, set to 0 and put to the end of list.
+            4. Clock -> circle design + pointer
+            5. NRU not recently used -> check R,M bit, R is clear every period of time
+            6. LRU least recently used -> close to OPT, but cost is large\
+            implementation: double linked list + hashtable
+            7. NFU not frequently used -> software counter
+            8. AGING -> 计数器在+R前右移一位，R加在左端
+            9. 工作集 -> 动态调整活跃页面的工作集
+
+* memory management in linux - segmentation & paging\
+    segmentation & paging
+    ![seg_paging](resource/segmentation_paging.png)
+    the process follows: logical addr -> linear addr -> physical addr.\
+    \
+    paging in detail:
+    ![paging](resource/page_lookup.png)
+    look up 4 levels of page tables.
+    * PML is pointed by CR3.
+    * CR3 also contains PCID(process context ID or address space ID)
+        * PCID enables faster context switching
+        * it distinguishs diff process's address space 
+        * TLB flushed if CR3 changed
+    * canonical address
+        * bit 48-63 is a signed extension of bit 47
+        * kernel space starts with 0xffff
+        * user space starts with 0x0000
+    * page table isolation (PTI)
+        * Two sets of page tables
+        * When the kernel is entered via syscalls, interrupts or exceptions, the page tables are switched to the full “kernel” copy
+        * When the system switches back to user mode, the user copy is used again
+        * The userspace page tables contain only a minimal amount of kernel data
+    * page types
+        1. Unreclaimable\
+            free pages, kernel pages, reserved pages, locked pages
+        2. Swappable\
+            anonymous pages of user addr space, mapped pages of tmpfs file sys( eg. shared memory) .
+        3. Syncable\
+            mapped pages of user addr space, block device buffer pages, pages of disk cache like inode cache.
+        4. Discardable - unused pages.
+        - mapped means it is mapped to some file. anonymous means it should be saved to swap area.
+    * page reclaimation\
+        LRU with inactive and active list.\
+        simple way: accessed in inactive list -> go to active list; tail of inactive and active list gets evicted while list is full and activation happens.\
+        Use refault distance and min access distance to decide if the page goes into inactive or active list when page fault happens. (R-E)<NR_ACTIVE ? active : inactive
+
+
+    * memory allocators\
+        general system
+        ![allocator](resource/mem_allocator.png)
+
+        1. buddy system
+            - 2^n as size of blocks to be allocated
+            - if not small blocks free, split bigger blocks
+            - merge contiguous blocks with same size n into 2*n.
+            - external fragmentation is eliminated, but internal still exists.
+                1. Objects smaller than a page
+                2. Objects of different sizes are allocated and freed, resulting in “holes” inside a page
+        2. object allocator
+            1. SLOB (Simple List of Blocks)\
+                Goal: compactness of memory, minimum memory overhead
+                - first proposal: first fit, merge neighbours while freed.
+                - optimized by 1. use list of different object sizes 2. best fit
+            2. SLAB
+                Goal: cache friendly, waste some space to gain cache efficiency
+            
+            3. SLUB
+                Goal: speed
+
 
 ## 2.10 file system
+1. object in common file model
+    * superblock\
+        stored info about a mounted fs.
+
+    * inode\
+        general info about a file.
+
+    * file\
+        info about interaction with an opened file and a process.
+
+    * dentry\
+        stores information about the linking of a directory entry with the corresponding file.
+
+2. data structure - inside task_struct
+    * fs_struct\
+        contain info about user, root, pwd etc.
+    * files (file opened)\
+        contains an important pointer: struct file ** fd  (pointer to array of file obj ptr)\
+        index 0,1,2 of the array is: stdin, stdout, stderr
+3. journaling file system\
+    Keeps track of changes not yet committed to the file system's main part.\
+    If system crashes, will be able to can recover to a consistent state.
+    * journaling in ext3 - handled by journaling block device
+        - journal: Metadata and content are saved in the journal
+        - ordered: Only metadata is saved in the journal. Metadata are journaled only after writing the content to disk. This is the default.
+        - writeback: Only metadata is saved in the journal. Metadata might be journaled either before or after the content is written to the disk
+
+
 
 ## 2.11 Deadlocks & Classic problems
 * Conditions of deadlock
@@ -804,6 +927,14 @@ However it requires sorted list
         1. in-order
         2. pre-order
         3. post-order
+    * red black tree\
+    n internal nodes has a height of at most 2*log(n+1)
+        - properties
+            - nodes are red or black
+            - root is black
+            - all leaves black
+            - if a node is red, its children are black
+            - every path from a node to a descendent leaf must contain the same number of black nodes(path)
 
 * linked list
     * normal linked list
