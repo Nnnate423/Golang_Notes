@@ -125,6 +125,20 @@ brower URL -> look up in local DNS -> if not found -> look up level DNS -> retur
     * POST -> not indempotency
     * HEAD -> GET with no response body.
 
+## 1.5 CORS issues
+* IP, Domain, url, host
+    * domain is a name of organization
+    * url = protocol(like https) + 主机(like www) + domain
+    * ip reqresents a machine. a domain can include multiple machines (related to domain, ip mapping)
+    * host is the hostname and ip of a domain name.
+* what is CORS 
+    * def: restriction on resource sharing between different origin. for security.
+    * default restriction: same domain, same port, same protocol(like http and https is diff origin)
+    * to allow sepcific origin, set allow-origin in header. to allow cookies, set allow-credentials in header. (server side)
+    * requst handling
+        * simple reqs: GET, HEAD, POST(only with certain content type)
+        * non simple ones: ajax client will send a OPTIONS req first. and then the original request, like POST.\
+        OPTIONS method: HTTP 的 OPTIONS 方法 用于获取目的资源所支持的通信选项. find supported options like origin, credentials, content type etc.
 
 <a name="OS"></a>
 # 2. [ Operating System ](#toc)

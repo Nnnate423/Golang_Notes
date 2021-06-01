@@ -14,6 +14,11 @@
 5. add depedencies to maven
 6. invalidate cache & restart project
 
+## * java 8 news
+1. lambda, consumer, supplier, function
+2. stream (foreach, map, collect, groupby, filter, parallel)
+3. optional
+4. default method for interface. enables interface to provide implementation to its successive classes. used to add implementation of Stream to Collections, if not this way, then need to add stream support to each collection classes, in practical.
 ### 0.1. Lambda & Consumer, Supplier Interface
 consumer only 1 input, no return;\
 supplier 1 return, no input;\
@@ -159,7 +164,8 @@ An interface:
 
 * spliterator (in both iterable and stream)\
     mainly used to split source data and process source data.\
-    common methods: TryAdvance(Consumer action), trySplit(), ForEachRemaining(Consumer action), estimateSize().
+    common methods: TryAdvance(Consumer action), trySplit(), ForEachRemaining(Consumer action), estimateSize().\
+    overrided to support stream.parallel() operation as you may want to define how data is splitted.
 
 
 ### 0.4 Access Modifier
@@ -218,7 +224,14 @@ Essentially a wrapper of class allowing it to be null.
 * filter(); map(); get()\
     get(): if there no element(null) in wrapper, get() will return NoSuchElementException.
     map() and filter() are same as stream. 
-    
+
+### 0.7 Data structure
+1. PriorityQueue
+    - init
+        - <>()
+        - <>(comparator)
+        - <>(size, comparator)
+        - eg. to reverse queue, set comparator as Collections.reverseOrder().
 
 ## 1. Spring
 * Simplicity

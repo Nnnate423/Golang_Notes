@@ -108,4 +108,77 @@ For AOP, aspect is a special class -> can be declared without changing the class
         public XXX xxx(){return new XXX();}
     }
     ```
+    3. use of @Around\
+        make sure to pass in ProceedingJoinPoint class as argument to the advice function.\
+        wrap the jp.proceed() function with your log to achieve around log for a point cut.
+    4. work with args
+    ```
+    @Aspect
+    public class XXX{
+        @Pointcut("execution(.. pkg.Sclass.method(int))" + "args(argName)")
+        public void point(int argName){}
 
+        @Before("point(argName)")
+        public void somefunc(int argName){...}
+    }
+    ```
+
+## 5. Spring MVC
+0. basic process\
+DispatcherServlet -> handler mapping -(find controller)-> controller\
+-> get model data and view name -> view resolver (configured in dispatcher) -> view implemented
+1. DispatcherServlet configuration
+    * setup
+    ```
+    class initializer extends AbstractAnnotationConfigDispatcherServletInitializer{
+        //override 3 methods
+        //1. getServletmapping
+        //2. getRootConfigClasses
+        //3. getServletConfigClasses
+    }
+    ```
+    first method specify the mapping path, like "/"\
+    and it will create DispatcherServlet and ContextLoaderListener.\
+    DispatcherServlet loads web related beans like resolvers, controllers; ContextLoaderListener loads other app related beans.
+2. MVC config
+    * setup
+    ```
+    @Configuration
+    @EnableWebMvc
+    @ComponentScan(...)
+    class xxx extends WebMvcConfigerAdapter{
+        //override defaulthandling
+        //write @Bean for viewResolver
+    }
+    ```
+    * Resolvers
+        * ViewResolver
+        * MultiPartResolver - handle file upload
+3. Controller
+    * RequestMapping(value = "/", method = GET)
+    * gets input
+        1. query param\
+        eg. 
+        ```
+        @RequestMapping(...)
+        public int mapfunc( @RequestParam( value = "xxx", defaultValue = 20 ) long max ){...}
+        ```
+        2. form param\
+        eg. @NotNull, @Size(min=, max=), @Pattern
+        3. path vars
+        eg. 
+        ```
+        @RequestMapping("/{name}")
+        public int mapfunc( @PathVariable("name") long max ){...}
+        ```
+4. exception handling
+    * @ResponseStatue - change status code of a exception
+    * @ExceptionHandler(xxxexception.class) - sepcific handler for a exception class, in one controller
+    * @ControllerAdvice - @ExceptionHandler inside this advice class will be applied to all controller.
+5. variable passing (for redirection)
+    * by url
+    * by session
+    * by flash attribute (implemented by session)
+    ```
+    model.addFlashAttribute(name, obj)
+    ```
